@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33122.133
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalizationResourceManager.Maui", "LocalizationResourceManager.Maui\LocalizationResourceManager.Maui.csproj", "{0302B0B5-F733-40E9-AF6F-967EDE17BA7E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalizationResourceManager.Maui.Sample", "LocalizationResourceManager.Maui.Sample\LocalizationResourceManager.Maui.Sample.csproj", "{C1D6380B-8D7B-4353-A1A0-3F37FE1A195A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0302B0B5-F733-40E9-AF6F-967EDE17BA7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0302B0B5-F733-40E9-AF6F-967EDE17BA7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0302B0B5-F733-40E9-AF6F-967EDE17BA7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0302B0B5-F733-40E9-AF6F-967EDE17BA7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1D6380B-8D7B-4353-A1A0-3F37FE1A195A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1D6380B-8D7B-4353-A1A0-3F37FE1A195A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1D6380B-8D7B-4353-A1A0-3F37FE1A195A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C1D6380B-8D7B-4353-A1A0-3F37FE1A195A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1D6380B-8D7B-4353-A1A0-3F37FE1A195A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1D6380B-8D7B-4353-A1A0-3F37FE1A195A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {098AE4CD-1471-4F05-8D20-0A07DD246FEE}
+	EndGlobalSection
+EndGlobal

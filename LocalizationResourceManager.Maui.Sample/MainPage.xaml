@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="LocalizationResourceManager.Maui.Sample.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:LocalizationResourceManager.Maui.Sample.Converters"
+    xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:ClickCountConverter x:Key="ClickCountConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="30,0"
+            Spacing="25"
+            VerticalOptions="Center">
+
+            <Image
+                HeightRequest="200"
+                HorizontalOptions="Center"
+                SemanticProperties.Description="Cute dot net bot waving hi to you!"
+                Source="dotnet_bot.png" />
+
+            <Label
+                FontSize="32"
+                HorizontalOptions="Center"
+                SemanticProperties.HeadingLevel="Level1"
+                Text="{Binding HelloWorld.Localized}" />
+
+            <Label
+                FontSize="18"
+                HorizontalOptions="Center"
+                SemanticProperties.Description="{localization:Translate WelcomeToMAUI}"
+                SemanticProperties.HeadingLevel="Level2"
+                Text="{localization:Translate WelcomeToMAUI}" />
+
+            <Button
+                x:Name="CounterBtn"
+                Clicked="OnCounterClicked"
+                HorizontalOptions="Center"
+                SemanticProperties.Hint="Counts the number of times you click"
+                Text="{Binding Count, Converter={StaticResource ClickCountConverter}}" />
+
+            <Button
+                x:Name="ToggleLanguageBtn"
+                Clicked="OnToggleLanguage"
+                HorizontalOptions="Center"
+                Text="{localization:Translate ToggleLanguage}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
