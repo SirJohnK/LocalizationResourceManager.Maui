@@ -17,19 +17,20 @@ namespace LocalizationResourceManager.Maui.Sample
             this.resourceManager = resourceManager;
         }
 
-        public int Count
+        public string CounterBtnText
         {
-            get => count;
-            set
+            get
             {
-                count = value;
-                OnPropertyChanged();
+                if (count == 0) return AppResources.ClickMe;
+                if (count == 1) return string.Format(AppResources.ClickedOneTime, count);
+                return string.Format(AppResources.ClickedManyTimes, count);
             }
         }
 
         private void OnCounterClicked(object sender, EventArgs e)
         {
-            Count++;
+            count++;
+            OnPropertyChanged(nameof(CounterBtnText));
         }
 
         private void OnToggleLanguage(object sender, EventArgs e)
@@ -46,7 +47,7 @@ namespace LocalizationResourceManager.Maui.Sample
             CultureInfo.DefaultThreadCurrentUICulture = culture;
             AppResources.Culture = culture;
             resourceManager.CurrentCulture = culture;
-            OnPropertyChanged("Count");
+            OnPropertyChanged(nameof(CounterBtnText));
         }
     }
 }

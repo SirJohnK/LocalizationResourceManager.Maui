@@ -61,6 +61,15 @@ namespace LocalizationResourceManager.Maui.Sample.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cute dot net bot waving hi to you!.
+        /// </summary>
+        internal static string BotDescription {
+            get {
+                return ResourceManager.GetString("BotDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clicked {0} times.
         /// </summary>
         internal static string ClickedManyTimes {
@@ -84,6 +93,15 @@ namespace LocalizationResourceManager.Maui.Sample.Resources {
         internal static string ClickMe {
             get {
                 return ResourceManager.GetString("ClickMe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Counts the number of times you click.
+        /// </summary>
+        internal static string CounterBtnHint {
+            get {
+                return ResourceManager.GetString("CounterBtnHint", resourceCulture);
             }
         }
         

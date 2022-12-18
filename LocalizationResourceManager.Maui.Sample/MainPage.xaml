@@ -6,12 +6,6 @@
     xmlns:converters="clr-namespace:LocalizationResourceManager.Maui.Sample.Converters"
     xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui">
 
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:ClickCountConverter x:Key="ClickCountConverter" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
-
     <ScrollView>
         <VerticalStackLayout
             Padding="30,0"
@@ -21,7 +15,7 @@
             <Image
                 HeightRequest="200"
                 HorizontalOptions="Center"
-                SemanticProperties.Description="Cute dot net bot waving hi to you!"
+                SemanticProperties.Description="{localization:Translate BotDescription}"
                 Source="dotnet_bot.png" />
 
             <Label
@@ -41,8 +35,8 @@
                 x:Name="CounterBtn"
                 Clicked="OnCounterClicked"
                 HorizontalOptions="Center"
-                SemanticProperties.Hint="Counts the number of times you click"
-                Text="{Binding Count, Converter={StaticResource ClickCountConverter}}" />
+                SemanticProperties.Hint="{localization:Translate CounterBtnHint}"
+                Text="{Binding CounterBtnText}" />
 
             <Button
                 x:Name="ToggleLanguageBtn"
