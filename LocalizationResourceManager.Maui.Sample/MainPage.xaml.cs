@@ -41,11 +41,6 @@ namespace LocalizationResourceManager.Maui.Sample
             else
                 culture = new CultureInfo("en");
 
-            CultureInfo.CurrentCulture = culture;
-            CultureInfo.CurrentUICulture = culture;
-            CultureInfo.DefaultThreadCurrentCulture = culture;
-            CultureInfo.DefaultThreadCurrentUICulture = culture;
-            AppResources.Culture = culture;
             resourceManager.CurrentCulture = culture;
             OnPropertyChanged(nameof(CounterBtnText));
         }

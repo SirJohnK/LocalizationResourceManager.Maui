@@ -16,7 +16,7 @@ namespace LocalizationResourceManager.Maui.Sample
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 })
-                .UseLocalizationResourceManager(AppResources.ResourceManager);
+                .UseLocalizationResourceManager(AppResources.ResourceManager, restoreLatest: true);
 
             //Add Views
             builder.Services.AddSingleton<MainPage>();

@@ -11,7 +11,7 @@ public partial class LocalizationResourceManager : ObservableObject
 {
     private static readonly Lazy<LocalizationResourceManager> currentHolder = new(() => new LocalizationResourceManager());
 
-    public static LocalizationResourceManager Current => currentHolder.Value;
+    internal static LocalizationResourceManager Current => currentHolder.Value;
 
     private ResourceManager? resourceManager;
 
@@ -19,35 +19,63 @@ public partial class LocalizationResourceManager : ObservableObject
     {
     }
 
-    public void Init(ResourceManager resource) => resourceManager = resource;
-
-    public void Init(ResourceManager resource, CultureInfo initialCulture)
+    public void Init(ResourceManager resource, CultureInfo? initialCulture = null)
     {
-        CurrentCulture = initialCulture;
-        Init(resource);
+        //Init
+        resourceManager = resource;
+        CurrentCulture = initialCulture ?? DefaultCulture;
     }
 
     public string GetValue(string text)
     {
         if (resourceManager == null)
-            throw new InvalidOperationException($"Must call {nameof(LocalizationResourceManager)}.{nameof(Init)} first");
+            throw new InvalidOperationException($"Must call {nameof(LocalizationResourceManager)}.{nameof(Init)} first!");
 
-        return resourceManager.GetString(text, CurrentCulture) ?? throw new NullReferenceException($"{nameof(text)}: {text} not found");
+        return resourceManager.GetString(text, CurrentCulture) ?? throw new NullReferenceException($"{nameof(text)}: {text} not found!");
     }
 
     public string this[string text] => GetValue(text);
 
-    private CultureInfo currentCulture = Thread.CurrentThread.CurrentUICulture;
+    private CultureInfo currentCulture = CultureInfo.InvariantCulture;
 
     /// <summary>
     /// Get/Set Current culture for resource manager.
     /// </summary>
-    /// <remarks>
-    /// IMPORTANT! SetProperty must set propertyNam to null to trigger update! (Due to this, ObserablePropertyAttribute does not work!)
-    /// </remarks>
     public CultureInfo CurrentCulture
     {
         get => currentCulture;
-        set => SetProperty(ref currentCulture, value, null);
+        set
+        {
+            if (SetProperty(ref currentCulture, value, null))
+            {
+                CultureInfo.CurrentCulture = value;
+                CultureInfo.CurrentUICulture = value;
+                CultureInfo.DefaultThreadCurrentCulture = value;
+                CultureInfo.DefaultThreadCurrentUICulture = value;
+                LatestCulture = value;
+            }
+        }
+    }
+
+    private static string DefaultCultureName => Preferences.Get(nameof(DefaultCulture), CultureInfo.CurrentCulture.Name);
+
+    /// <summary>
+    /// Get/Set Default / System culture.
+    /// </summary>
+    public static CultureInfo DefaultCulture
+    {
+        get => CultureInfo.GetCultureInfo(DefaultCultureName);
+        set => Preferences.Set(nameof(DefaultCulture), value.Name);
+    }
+
+    private static string LatestCultureName => Preferences.Get(nameof(LatestCulture), DefaultCulture.Name);
+
+    /// <summary>
+    /// Get/Set Default / System culture.
+    /// </summary>
+    public static CultureInfo LatestCulture
+    {
+        get => CultureInfo.GetCultureInfo(LatestCultureName);
+        set => Preferences.Set(nameof(LatestCulture), value.Name);
     }
 }
