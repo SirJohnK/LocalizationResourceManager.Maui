@@ -6,4 +6,4 @@ Localization ResourceManager for .NET MAUI.
 
 |Name|Info|
 | ------------------- | :------------------: |
-|Awesome.Maui.Controls|[![NuGet](https://buildstats.info/nuget/LocalizationResourceManager.Maui?includePreReleases=true)](https://www.nuget.org/packages/LocalizationResourceManager.Maui/)|
+|LocalizationResourceManager.Maui|[![NuGet](https://buildstats.info/nuget/LocalizationResourceManager.Maui?includePreReleases=true)](https://www.nuget.org/packages/LocalizationResourceManager.Maui/)|
