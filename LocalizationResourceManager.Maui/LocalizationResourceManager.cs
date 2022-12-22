@@ -7,36 +7,54 @@ namespace LocalizationResourceManager.Maui;
 /// <summary>
 /// Manager to track current resource manager and current culture.
 /// </summary>
-public partial class LocalizationResourceManager : ObservableObject
+public partial class LocalizationResourceManager : ObservableObject, ILocalizationSettings
 {
     private static readonly Lazy<LocalizationResourceManager> currentHolder = new(() => new LocalizationResourceManager());
 
     internal static LocalizationResourceManager Current => currentHolder.Value;
 
-    private ResourceManager? resourceManager;
+    private List<ResourceManager> resources = new List<ResourceManager>();
 
     private LocalizationResourceManager()
     {
-    }
-
-    public void Init(ResourceManager resource, CultureInfo? initialCulture = null)
-    {
         //Init
-        resourceManager = resource;
-        CurrentCulture = initialCulture ?? DefaultCulture;
+        DefaultCulture = CultureInfo.CurrentCulture;
     }
 
     public string GetValue(string text)
     {
-        if (resourceManager == null)
-            throw new InvalidOperationException($"Must call {nameof(LocalizationResourceManager)}.{nameof(Init)} first!");
+        //Verify Resources
+        if ((resources?.Count ?? 0) == 0)
+            throw new InvalidOperationException($"At least one resource must be added with Settings.{nameof(AddResource)}!");
 
-        return resourceManager.GetString(text, CurrentCulture) ?? throw new NullReferenceException($"{nameof(text)}: {text} not found!");
+        //Attemp to get localized string with Current Culture
+        var value = resources?.Select(resource => resource.GetString(text, CurrentCulture)).FirstOrDefault(output => output is not null);
+
+        //Return Result
+        return value ?? throw new NullReferenceException($"{nameof(text)}: {text} not found!");
     }
+
+    #region ILocalizationSettings
+
+    public void AddResource(ResourceManager resource) => resources.Add(resource);
+
+    public void InitialCulture(CultureInfo culture) => CurrentCulture = (restoreLatestCulture ? CurrentCulture : culture);
+
+    private bool restoreLatestCulture = false;
+
+    public void RestoreLatestCulture(bool restore)
+    {
+        //Set state and Update Current Culture
+        restoreLatestCulture = restore;
+        if (restoreLatestCulture)
+            CurrentCulture = LatestCulture ?? DefaultCulture;
+    }
+
+    #endregion ILocalizationSettings
 
     public string this[string text] => GetValue(text);
 
-    private CultureInfo currentCulture = CultureInfo.InvariantCulture;
+    private CultureInfo currentCulture = CultureInfo.CurrentCulture;
 
     /// <summary>
     /// Get/Set Current culture for resource manager.
@@ -46,34 +64,35 @@ public partial class LocalizationResourceManager : ObservableObject
         get => currentCulture;
         set
         {
+            CultureInfo.CurrentCulture = value;
+            CultureInfo.CurrentUICulture = value;
+            CultureInfo.DefaultThreadCurrentCulture = value;
+            CultureInfo.DefaultThreadCurrentUICulture = value;
             if (SetProperty(ref currentCulture, value, null))
-            {
-                CultureInfo.CurrentCulture = value;
-                CultureInfo.CurrentUICulture = value;
-                CultureInfo.DefaultThreadCurrentCulture = value;
-                CultureInfo.DefaultThreadCurrentUICulture = value;
                 LatestCulture = value;
-            }
         }
     }
 
-    private static string DefaultCultureName => Preferences.Get(nameof(DefaultCulture), CultureInfo.CurrentCulture.Name);
+    private string DefaultCultureName => Preferences.Get(nameof(DefaultCulture), CultureInfo.CurrentCulture.Name);
 
     /// <summary>
     /// Get/Set Default / System culture.
     /// </summary>
-    public static CultureInfo DefaultCulture
+    public CultureInfo DefaultCulture
     {
         get => CultureInfo.GetCultureInfo(DefaultCultureName);
         set => Preferences.Set(nameof(DefaultCulture), value.Name);
     }
 
-    private static string LatestCultureName => Preferences.Get(nameof(LatestCulture), DefaultCulture.Name);
+    private string LatestCultureName => Preferences.Get(nameof(LatestCulture), DefaultCulture.Name);
 
     /// <summary>
-    /// Get/Set Default / System culture.
+    /// Get/Set Current / Latest culture.
     /// </summary>
-    public static CultureInfo LatestCulture
+    /// <remarks>
+    /// Latest CultureInfo is stored in Preferrences and updated everytime CurrentCulture is updated.
+    /// </remarks>
+    private CultureInfo LatestCulture
     {
         get => CultureInfo.GetCultureInfo(LatestCultureName);
         set => Preferences.Set(nameof(LatestCulture), value.Name);
