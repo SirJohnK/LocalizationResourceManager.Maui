@@ -7,7 +7,7 @@ namespace LocalizationResourceManager.Maui;
 /// <summary>
 /// Manager to track current resource manager and current culture.
 /// </summary>
-public partial class LocalizationResourceManager : ObservableObject, ILocalizationSettings
+public partial class LocalizationResourceManager : ObservableObject, ILocalizationResourceManager, ILocalizationSettings
 {
     private static readonly Lazy<LocalizationResourceManager> currentHolder = new(() => new LocalizationResourceManager());
 

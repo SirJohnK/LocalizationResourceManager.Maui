@@ -6,16 +6,19 @@ namespace LocalizationResourceManager.Maui.Sample
     public partial class MainPage : ContentPage
     {
         private int count = 0;
-        private readonly LocalizationResourceManager resourceManager;
+        private readonly ILocalizationResourceManager resourceManager;
 
         public LocalizedString HelloWorld { get; } = new(() => $"{AppResources.Hello}, {AppResources.World}!");
 
-        public MainPage(LocalizationResourceManager resourceManager)
+        public MainPage(ILocalizationResourceManager resourceManager)
         {
             InitializeComponent();
             BindingContext = this;
             this.resourceManager = resourceManager;
+            OnPropertyChanged(nameof(CurrentCulture));
         }
+
+        public string? CurrentCulture => resourceManager?.CurrentCulture.NativeName;
 
         public string CounterBtnText
         {
@@ -35,14 +38,12 @@ namespace LocalizationResourceManager.Maui.Sample
 
         private void OnToggleLanguage(object sender, EventArgs e)
         {
+            var languages = new List<string>() { "en", "fr", "de", "es", "sv" };
             var culture = resourceManager.CurrentCulture;
-            if (culture.TwoLetterISOLanguageName.Equals("en"))
-                culture = new CultureInfo("sv");
-            else
-                culture = new CultureInfo("en");
-
-            resourceManager.CurrentCulture = culture;
+            var index = languages.IndexOf(culture.TwoLetterISOLanguageName);
+            resourceManager.CurrentCulture = new CultureInfo(languages[++index < languages.Count ? index : 0]);
             OnPropertyChanged(nameof(CounterBtnText));
+            OnPropertyChanged(nameof(CurrentCulture));
         }
     }
 }

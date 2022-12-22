@@ -20,7 +20,7 @@ public static class AppHostBuilderExtensions
         settings.Invoke(LocalizationResourceManager.Current);
 
         //Add Service
-        builder.Services.AddSingleton(LocalizationResourceManager.Current);
+        builder.Services.AddSingleton<ILocalizationResourceManager>(LocalizationResourceManager.Current);
 
         //Return Builder
         return builder;

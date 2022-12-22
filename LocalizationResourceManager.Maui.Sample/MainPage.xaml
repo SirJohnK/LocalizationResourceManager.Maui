@@ -3,13 +3,12 @@
     x:Class="LocalizationResourceManager.Maui.Sample.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:converters="clr-namespace:LocalizationResourceManager.Maui.Sample.Converters"
     xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui">
 
     <ScrollView>
         <VerticalStackLayout
             Padding="30,0"
-            Spacing="25"
+            Spacing="15"
             VerticalOptions="Center">
 
             <Image
@@ -37,6 +36,11 @@
                 HorizontalOptions="Center"
                 SemanticProperties.Hint="{localization:Translate CounterBtnHint}"
                 Text="{Binding CounterBtnText}" />
+
+            <Label
+                FontSize="Small"
+                HorizontalOptions="Center"
+                Text="{Binding CurrentCulture, StringFormat='({0})'}" />
 
             <Button
                 x:Name="ToggleLanguageBtn"
