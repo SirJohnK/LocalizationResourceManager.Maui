@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 
 namespace LocalizationResourceManager.Maui
 {
@@ -14,5 +9,7 @@ namespace LocalizationResourceManager.Maui
         CultureInfo CurrentCulture { get; set; }
 
         string GetValue(string text);
+
+        string this[string text] { get; }
     }
 }
