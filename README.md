@@ -89,7 +89,7 @@ To handle and access the Current or Default Culture, we inject the `ILocalizatio
 - Add the `ILocalizationResourceManager` interface to your constructor and store locally for later access.
 - Use **CurrentCulture** property to Get or Set CurrentCulture. (All text accessed by `TranslateExtension` or `LocalizedString` will be updated immediately!)
 - Use **DefaultCulture** property to Get Default/System culture.
-- Use **GetValue** method to manually retrieve localized text based on Current culture.
+- Use **GetValue** method or Indexer operator **[]** to manually retrieve localized text based on Current culture.
 ```csharp
 public partial class MainPage : ContentPage
 {
