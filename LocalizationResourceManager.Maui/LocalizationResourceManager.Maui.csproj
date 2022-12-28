@@ -19,11 +19,10 @@
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>LocalizationResourceManager.Maui</Title>
 		<Authors>Johan Svensson, Charlin Agramonte, Brandon Minnick, Maksym Koshovyi</Authors>
-		<Description>Localization ResourceManager for .NET MAUI.</Description>
+		<Description>.NET MAUI version of the Xamarin Community Toolkit LocalizationResourceManager.</Description>
 		<Copyright>© 2022 Johan Svensson All Rights Reserved</Copyright>
 		<PackageProjectUrl>https://github.com/SirJohnK/LocalizationResourceManager.Maui</PackageProjectUrl>
 		<PackageIcon>sirjohnk.png</PackageIcon>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/SirJohnK/LocalizationResourceManager.Maui</RepositoryUrl>
 		<PackageTags>dotnet,dotnetmaui,localization</PackageTags>
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
@@ -71,10 +70,6 @@
 
 	<ItemGroup>
 	  <None Include="..\LICENSE.txt">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	  <None Include="..\README.md">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
