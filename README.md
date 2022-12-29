@@ -1,6 +1,6 @@
 # LocalizationResourceManager.Maui <a href="https://www.buymeacoffee.com/sirjohnk" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" align="right" style="height: 37px !important;width: 170px !important;" ></a>
 
-.NET MAUI version of the Xamarin Community Toolkit LocalizationResourceManager.
+Enhanced .NET MAUI version of the Xamarin Community Toolkit LocalizationResourceManager.
 
 ## NuGet
 
@@ -109,3 +109,5 @@ resourceManager.CurrentCulture = new CultureInfo("en");
 
 ## Sample
 Look at the [Sample project](https://github.com/SirJohnK/LocalizationResourceManager.Maui/tree/main/LocalizationResourceManager.Maui.Sample) for a example of how to use this library in an .NET MAUI application.
+
+[![Sample Application](https://github.com/SirJohnK/LocalizationResourceManager.Maui/blob/main/Docs/LocalizationResourceManager.gif)](https://github.com/SirJohnK/LocalizationResourceManager.Maui/tree/main/LocalizationResourceManager.Maui.Sample)
