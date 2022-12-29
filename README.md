@@ -109,3 +109,5 @@ resourceManager.CurrentCulture = new CultureInfo("en");
 
 ## Sample
 Look at the [Sample project](https://github.com/SirJohnK/LocalizationResourceManager.Maui/tree/main/LocalizationResourceManager.Maui.Sample) for a example of how to use this library in an .NET MAUI application.
+
+[![Sample Application](https://github.com/SirJohnK/LocalizationResourceManager.Maui/blob/main/Docs/LocalizationResourceManager.gif)](https://github.com/SirJohnK/LocalizationResourceManager.Maui/tree/main/LocalizationResourceManager.Maui.Sample)
