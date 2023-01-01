@@ -8,26 +8,27 @@ namespace LocalizationResourceManager.Maui.Sample
         private int count = 0;
         private readonly ILocalizationResourceManager resourceManager;
 
-        public LocalizedString HelloWorld { get; } = new(() => $"{AppResources.Hello}, {AppResources.World}!");
+        public LocalizedString HelloWorld { get; }
+        public LocalizedString CounterBtnText { get; }
+        public LocalizedString CurrentCulture { get; }
 
         public MainPage(ILocalizationResourceManager resourceManager)
         {
             InitializeComponent();
-            BindingContext = this;
             this.resourceManager = resourceManager;
-            OnPropertyChanged(nameof(CurrentCulture));
+
+            HelloWorld = new(() => $"{resourceManager["Hello"]}, {resourceManager["World"]}!");
+            CounterBtnText = new(() => GetCounterBtnText());
+            CurrentCulture = new(() => resourceManager.CurrentCulture.NativeName);
+
+            BindingContext = this;
         }
 
-        public string? CurrentCulture => resourceManager?.CurrentCulture.NativeName;
-
-        public string CounterBtnText
+        private string GetCounterBtnText()
         {
-            get
-            {
-                if (count == 0) return AppResources.ClickMe;
-                if (count == 1) return string.Format(AppResources.ClickedOneTime, count);
-                return string.Format(AppResources.ClickedManyTimes, count);
-            }
+            if (count == 0) return resourceManager["ClickMe"];
+            if (count == 1) return resourceManager["ClickedOneTime", count];
+            return resourceManager["ClickedManyTimes", count];
         }
 
         private void OnCounterClicked(object sender, EventArgs e)
@@ -42,8 +43,6 @@ namespace LocalizationResourceManager.Maui.Sample
             var culture = resourceManager.CurrentCulture;
             var index = languages.IndexOf(culture.TwoLetterISOLanguageName);
             resourceManager.CurrentCulture = new CultureInfo(languages[++index < languages.Count ? index : 0]);
-            OnPropertyChanged(nameof(CounterBtnText));
-            OnPropertyChanged(nameof(CurrentCulture));
         }
     }
 }

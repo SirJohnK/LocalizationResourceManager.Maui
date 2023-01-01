@@ -26,11 +26,10 @@
 		<RepositoryUrl>https://github.com/SirJohnK/LocalizationResourceManager.Maui</RepositoryUrl>
 		<PackageTags>dotnet,dotnetmaui,localization</PackageTags>
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-		<AssemblyVersion>1.0.1.0</AssemblyVersion>
-		<FileVersion>1.0.1.0</FileVersion>
-		<PackageReleaseNotes>- Add text Indexer Operator
-- Update documentation</PackageReleaseNotes>
-		<Version>1.0.1</Version>
+		<AssemblyVersion>1.0.2.0</AssemblyVersion>
+		<FileVersion>1.0.2.0</FileVersion>
+		<PackageReleaseNotes>- Add format params parameter option</PackageReleaseNotes>
+		<Version>1.0.2</Version>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">

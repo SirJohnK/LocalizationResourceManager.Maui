@@ -10,6 +10,10 @@ namespace LocalizationResourceManager.Maui
 
         string GetValue(string text);
 
+        string GetValue(string text, params object[] arguments);
+
         string this[string text] { get; }
+
+        string this[string text, params object[] arguments] { get; }
     }
 }

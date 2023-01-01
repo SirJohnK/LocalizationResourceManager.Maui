@@ -35,12 +35,12 @@
                 Clicked="OnCounterClicked"
                 HorizontalOptions="Center"
                 SemanticProperties.Hint="{localization:Translate CounterBtnHint}"
-                Text="{Binding CounterBtnText}" />
+                Text="{Binding CounterBtnText.Localized}" />
 
             <Label
                 FontSize="Small"
                 HorizontalOptions="Center"
-                Text="{Binding CurrentCulture, StringFormat='({0})'}" />
+                Text="{Binding CurrentCulture.Localized, StringFormat='({0})'}" />
 
             <Button
                 x:Name="ToggleLanguageBtn"

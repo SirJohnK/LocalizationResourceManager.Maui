@@ -21,19 +21,6 @@ public partial class LocalizationResourceManager : ObservableObject, ILocalizati
         DefaultCulture = CultureInfo.CurrentCulture;
     }
 
-    public string GetValue(string text)
-    {
-        //Verify Resources
-        if ((resources?.Count ?? 0) == 0)
-            throw new InvalidOperationException($"At least one resource must be added with Settings.{nameof(AddResource)}!");
-
-        //Attemp to get localized string with Current Culture
-        var value = resources?.Select(resource => resource.GetString(text, CurrentCulture)).FirstOrDefault(output => output is not null);
-
-        //Return Result
-        return value ?? throw new NullReferenceException($"{nameof(text)}: {text} not found!");
-    }
-
     #region ILocalizationSettings
 
     public void AddResource(ResourceManager resource) => resources.Add(resource);
@@ -52,7 +39,26 @@ public partial class LocalizationResourceManager : ObservableObject, ILocalizati
 
     #endregion ILocalizationSettings
 
+    public string GetValue(string text)
+    {
+        //Verify Resources
+        if ((resources?.Count ?? 0) == 0)
+            throw new InvalidOperationException($"At least one resource must be added with Settings.{nameof(AddResource)}!");
+
+        //Attemp to get localized string with Current Culture
+        var value = resources?.Select(resource => resource.GetString(text, CurrentCulture)).FirstOrDefault(output => output is not null);
+
+        //Return Result
+        return value ?? throw new NullReferenceException($"{nameof(text)}: {text} not found!");
+    }
+
+    #region ILocalizationResourceManager
+
+    public string GetValue(string text, params object[] arguments) => string.Format(GetValue(text), arguments);
+
     public string this[string text] => GetValue(text);
+
+    public string this[string text, params object[] arguments] => GetValue(text, arguments);
 
     private CultureInfo currentCulture = CultureInfo.CurrentCulture;
 
@@ -83,6 +89,8 @@ public partial class LocalizationResourceManager : ObservableObject, ILocalizati
         get => CultureInfo.GetCultureInfo(DefaultCultureName);
         set => Preferences.Set(nameof(DefaultCulture), value.Name);
     }
+
+    #endregion ILocalizationResourceManager
 
     private string LatestCultureName => Preferences.Get(nameof(LatestCulture), DefaultCulture.Name);
 
