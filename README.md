@@ -76,6 +76,14 @@ When used to handle localized texts in code behind or ViewModel, use the `Locali
 ```csharp
 public LocalizedString HelloWorld { get; } = new(() => $"{AppResources.Hello}, {AppResources.World}!");
 ```
+...or to support multiple Resource managers...
+```csharp
+public LocalizedString HelloWorld { get; }
+
+public MainPage(ILocalizationResourceManager resourceManager)
+{
+    HelloWorld = new(() => $"{resourceManager["Hello"]}, {resourceManager["World"]}!");
+```
 ```csharp
 <Label
     FontSize="32"
@@ -103,6 +111,15 @@ public partial class MainPage : ContentPage
 ```csharp
 public string? CurrentCulture => resourceManager?.CurrentCulture.NativeName;
 ```
+...or...
+```csharp
+public LocalizedString CurrentCulture { get; }
+
+public MainPage(ILocalizationResourceManager resourceManager)
+{
+    CurrentCulture = new(() => resourceManager.CurrentCulture.NativeName);
+```
+One line to change Current Culture and Refresh ALL localized texts!
 ```csharp
 resourceManager.CurrentCulture = new CultureInfo("en");
 ```
