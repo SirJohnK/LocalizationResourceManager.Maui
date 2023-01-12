@@ -15,5 +15,7 @@ namespace LocalizationResourceManager.Maui
         string this[string text] { get; }
 
         string this[string text, params object[] arguments] { get; }
+
+        void ReleaseAllResources();
     }
 }

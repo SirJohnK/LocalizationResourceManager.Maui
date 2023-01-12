@@ -20,16 +20,17 @@
 		<Title>LocalizationResourceManager.Maui</Title>
 		<Authors>Johan Svensson, Charlin Agramonte, Brandon Minnick, Maksym Koshovyi</Authors>
 		<Description>Enhanced .NET MAUI version of the Xamarin Community Toolkit LocalizationResourceManager.</Description>
-		<Copyright>© 2022 Johan Svensson All Rights Reserved</Copyright>
+		<Copyright>© 2023 Johan Svensson All Rights Reserved</Copyright>
 		<PackageProjectUrl>https://github.com/SirJohnK/LocalizationResourceManager.Maui</PackageProjectUrl>
 		<PackageIcon>sirjohnk.png</PackageIcon>
 		<RepositoryUrl>https://github.com/SirJohnK/LocalizationResourceManager.Maui</RepositoryUrl>
 		<PackageTags>dotnet,dotnetmaui,localization</PackageTags>
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-		<AssemblyVersion>1.0.2.0</AssemblyVersion>
-		<FileVersion>1.0.2.0</FileVersion>
-		<PackageReleaseNotes>- Add format params parameter option</PackageReleaseNotes>
-		<Version>1.0.2</Version>
+		<AssemblyVersion>1.0.3.0</AssemblyVersion>
+		<FileVersion>1.0.3.0</FileVersion>
+		<PackageReleaseNotes>- Add AddFileResource setting for registration of file based ResourceManager and create default .resources file, if missing.
+    - ReleaseAllResources manager method to Release All Resources for All registered resources.</PackageReleaseNotes>
+		<Version>1.0.3</Version>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
