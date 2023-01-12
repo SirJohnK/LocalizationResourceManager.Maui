@@ -41,11 +41,13 @@ builder
     .UseLocalizationResourceManager(settings =>
     {
         settings.AddResource(AppResources.ResourceManager);
+        settings.AddFileResource("CustomResources", FileSystem.Current.AppDataDirectory);
         settings.RestoreLatestCulture(true);
     });
 ```
-Settings contains 3 methods for configuration:
+Settings contains 4 methods for configuration:
 - **AddResource** (Add one or more Resource Managers)
+- **AddFileResource** (Add file based Resource Managers. Create/Read/Write at runtime with [ResourceWriter](https://learn.microsoft.com/en-us/dotnet/api/system.resources.resourcewriter) and [ResourceReader](https://learn.microsoft.com/en-us/dotnet/api/system.resources.resourcereader).)
 - **InitialCulture** (Set initial/startup culture, Default: Current System Culture)
 - **RestoreLatestCulture** (Restore latest set culture flag, Default: false, Note: Will override InitalCulture!)
 
