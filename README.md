@@ -18,6 +18,7 @@ Big shoutout to the original authors, [Charlin Agramonte](https://github.com/Cha
 Compared to the original solution we have some enhanced and added features:
 - Easy setup with builder pattern extension
 - Supports multiple Resource managers
+- Supports file based Resource managers
 - Supports storing and restoring of the latest set culture
 - New `ILocalizationResourceManager` interface registered for constructor injection with DI
 - Stores current Default / System culture
@@ -41,7 +42,6 @@ builder
     .UseLocalizationResourceManager(settings =>
     {
         settings.AddResource(AppResources.ResourceManager);
-        settings.AddFileResource("CustomResources", FileSystem.Current.AppDataDirectory);
         settings.RestoreLatestCulture(true);
     });
 ```
@@ -100,6 +100,7 @@ To handle and access the Current or Default Culture, we inject the `ILocalizatio
 - Use **CurrentCulture** property to Get or Set CurrentCulture. (All text accessed by `TranslateExtension` or `LocalizedString` will be updated immediately!)
 - Use **DefaultCulture** property to Get Default/System culture.
 - Use **GetValue** method or Indexer operator **[]** to manually retrieve localized text based on Current culture.
+- Use **ReleaseAllResources** method to Release/Close all resources for all registered resources. (Use before manually accessing registered file based resources!) 
 ```csharp
 public partial class MainPage : ContentPage
 {
