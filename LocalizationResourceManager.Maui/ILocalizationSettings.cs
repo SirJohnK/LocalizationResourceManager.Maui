@@ -13,5 +13,12 @@ namespace LocalizationResourceManager.Maui
         void InitialCulture(CultureInfo culture);
 
         void RestoreLatestCulture(bool restore);
+
+        /// <summary>
+        /// Activate support for Resource Names with Dots.
+        /// </summary>
+        /// <remarks>Dots in names will be temporarily replaced by the substitution text when handled by the <see cref="TranslateExtension"/>.</remarks>
+        /// <param name="substitution">Replacement text for dots in resource names.</param>
+        void SupportNameWithDots(string substitution = "_");
     }
 }

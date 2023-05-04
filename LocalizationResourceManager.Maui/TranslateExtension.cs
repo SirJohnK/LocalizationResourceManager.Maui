@@ -6,7 +6,15 @@
 [ContentProperty(nameof(Text))]
 public class TranslateExtension : IMarkupExtension<BindingBase>
 {
-    public string Text { get; set; } = string.Empty;
+    private string text = string.Empty;
+
+    public string Text
+    {
+        get => LocalizationResourceManager.Current.IsNameWithDotsSupported
+            ? text.Replace(".", LocalizationResourceManager.Current.DotSubstitution)
+            : text;
+        set => text = value;
+    }
 
     public string? StringFormat { get; set; }
 

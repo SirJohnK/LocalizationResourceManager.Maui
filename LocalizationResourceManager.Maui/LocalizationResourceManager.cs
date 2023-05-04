@@ -16,6 +16,10 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
 
     private List<ResourceManager> resources = new List<ResourceManager>();
 
+    internal bool IsNameWithDotsSupported { get; private set; } = false;
+
+    internal string DotSubstitution { get; private set; } = "_";
+
     private LocalizationResourceManager()
     {
         //Init
@@ -115,6 +119,18 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
             CurrentCulture = LatestCulture ?? DefaultCulture;
     }
 
+    /// <summary>
+    /// Activate support for Resource Names with Dots.
+    /// </summary>
+    /// <remarks>Dots in names will be temporarily replaced by the substitution text when handled by the <see cref="TranslateExtension"/>.</remarks>
+    /// <param name="substitution">Replacement text for dots in resource names.</param>
+    public void SupportNameWithDots(string substitution = "_")
+    {
+        //Activate Support!
+        IsNameWithDotsSupported = true;
+        DotSubstitution = substitution;
+    }
+
     #endregion ILocalizationSettings
 
     #region ILocalizationResourceManager
@@ -124,6 +140,9 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         //Verify Resources
         if ((resources?.Count ?? 0) == 0)
             throw new InvalidOperationException($"At least one resource must be added with Settings.{nameof(AddResource)}!");
+
+        //If supported, handle names with dots!
+        text = IsNameWithDotsSupported ? text.Replace(DotSubstitution, ".") : text;
 
         //Attemp to get localized string with Current Culture
         var value = resources?.Select(resource => resource.GetString(text, CurrentCulture)).FirstOrDefault(output => output is not null);
