@@ -22,6 +22,7 @@ Compared to the original solution we have some enhanced and added features:
 - Supports storing and restoring of the latest set culture
 - New `ILocalizationResourceManager` interface registered for constructor injection with DI
 - Stores current Default / System culture
+- Supports Resource names with dots.
 - Uses the WeakEventHandler (.NET MAUI)
 
 For localized texts used in XAML and/or code behind, we still have:
@@ -45,11 +46,12 @@ builder
         settings.RestoreLatestCulture(true);
     });
 ```
-Settings contains 4 methods for configuration:
+Settings contains 5 methods for configuration:
 - **AddResource** (Add one or more Resource Managers)
 - **AddFileResource** (Add file based Resource Managers. Create/Read/Write at runtime with [ResourceWriter](https://learn.microsoft.com/en-us/dotnet/api/system.resources.resourcewriter) and [ResourceReader](https://learn.microsoft.com/en-us/dotnet/api/system.resources.resourcereader).)
 - **InitialCulture** (Set initial/startup culture, Default: Current System Culture)
 - **RestoreLatestCulture** (Restore latest set culture flag, Default: false, Note: Will override InitalCulture!)
+- **SupportNameWithDots** (Activate support for Resource Names with Dots when used with TranslateExtension. Option to set custom dot substitution. Default: "_")
 
 ## Use in XAML
 When used for localized texts in XAML pages, use the `TranslateExtension`:
