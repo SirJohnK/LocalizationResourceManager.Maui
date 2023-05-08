@@ -16,6 +16,10 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
 
     private List<ResourceManager> resources = new List<ResourceManager>();
 
+    internal bool IsNameWithDotsSupported { get; private set; } = false;
+
+    internal string DotSubstitution { get; private set; } = "_";
+
     private LocalizationResourceManager()
     {
         //Init
@@ -94,18 +98,18 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
     /// </summary>
     /// <param name="culture">Culture to set</param>
     /// <remarks>
-    /// If, RestoreLatestCulture is set to true, this will be ignored!
+    /// If, <see cref="RestoreLatestCulture(bool)"/> is set to <see langword="true"/>, this will be ignored!
     /// </remarks>
     public void InitialCulture(CultureInfo culture) => CurrentCulture = (restoreLatestCulture ? CurrentCulture : culture);
 
     private bool restoreLatestCulture = false;
 
     /// <summary>
-    /// Set if latest set culture should be restored. Default: false
+    /// Set if latest set culture should be restored. Default: <see langword="false"/>
     /// </summary>
     /// <param name="restore">Flag indicating if latest set culture should be restored</param>
     /// <remarks>
-    /// If set to true, this will override InitialCulture!
+    /// If set to <see langword="true"/>, this will override <see cref="InitialCulture(CultureInfo)"/>!
     /// </remarks>
     public void RestoreLatestCulture(bool restore)
     {
@@ -115,15 +119,38 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
             CurrentCulture = LatestCulture ?? DefaultCulture;
     }
 
+    /// <summary>
+    /// Activate support for Resource Names with Dots.
+    /// </summary>
+    /// <remarks>Dots in names will be temporarily replaced by the substitution text when handled by the <see cref="TranslateExtension"/>.</remarks>
+    /// <param name="substitution">Replacement text for dots in resource names.</param>
+    public void SupportNameWithDots(string substitution = "_")
+    {
+        //Activate Support!
+        IsNameWithDotsSupported = true;
+        DotSubstitution = substitution;
+    }
+
     #endregion ILocalizationSettings
 
     #region ILocalizationResourceManager
 
+    /// <summary>
+    /// Get resource text value for <see cref="CurrentCulture"/>.
+    /// </summary>
+    /// <param name="text">Resource name.</param>
+    /// <remarks>Will search all registered resources, in the order they were added, until first match is found!</remarks>
+    /// <returns>Found resource text value.</returns>
+    /// <exception cref="InvalidOperationException">Will be thrown if no resources are added.</exception>
+    /// <exception cref="NullReferenceException">Will be thrown if no resource was found.</exception>
     public string GetValue(string text)
     {
         //Verify Resources
         if ((resources?.Count ?? 0) == 0)
             throw new InvalidOperationException($"At least one resource must be added with Settings.{nameof(AddResource)}!");
+
+        //If supported, handle names with dots!
+        text = IsNameWithDotsSupported ? text.Replace(DotSubstitution, ".") : text;
 
         //Attemp to get localized string with Current Culture
         var value = resources?.Select(resource => resource.GetString(text, CurrentCulture)).FirstOrDefault(output => output is not null);
@@ -132,10 +159,36 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         return value ?? throw new NullReferenceException($"{nameof(text)}: {text} not found!");
     }
 
+    /// <summary>
+    /// Get formatted resource text value for <see cref="CurrentCulture"/> with specified parameters.
+    /// </summary>
+    /// <param name="text">Resource name.</param>
+    /// <param name="arguments">Parameters used when formatting resource text value.</param>
+    /// <remarks>
+    /// Uses <see cref="string.Format(string, object?[])"/> syntax.
+    /// Will search all registered resources, in the order they were added, until first match is found!
+    /// </remarks>
+    /// <returns>Formatted resource text value.</returns>
     public string GetValue(string text, params object[] arguments) => string.Format(GetValue(text), arguments);
 
+    /// <summary>
+    /// Indexer property to Get resource text value for <see cref="CurrentCulture"/>.
+    /// </summary>
+    /// <param name="text">Resource name.</param>
+    /// <remarks>Will search all registered resources, in the order they were added, until first match is found!</remarks>
+    /// <returns>Found resource text value.</returns>
     public string this[string text] => GetValue(text);
 
+    /// <summary>
+    /// Indexer property to Get formatted resource text value for <see cref="CurrentCulture"/> with specified parameters.
+    /// </summary>
+    /// <param name="text">Resource name.</param>
+    /// <param name="arguments">Parameters used when formatting resource text value.</param>
+    /// <remarks>
+    /// Uses <see cref="string.Format(string, object?[])"/> syntax.
+    /// Will search all registered resources, in the order they were added, until first match is found!
+    /// </remarks>
+    /// <returns>Formatted resource text value.</returns>
     public string this[string text, params object[] arguments] => GetValue(text, arguments);
 
     private CultureInfo currentCulture = CultureInfo.CurrentCulture;
@@ -165,7 +218,7 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
     public CultureInfo DefaultCulture
     {
         get => CultureInfo.GetCultureInfo(DefaultCultureName);
-        set => Preferences.Set(nameof(DefaultCulture), value.Name);
+        private set => Preferences.Set(nameof(DefaultCulture), value.Name);
     }
 
     /// <summary>

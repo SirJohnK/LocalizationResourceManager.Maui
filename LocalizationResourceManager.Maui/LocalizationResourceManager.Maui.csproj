@@ -26,11 +26,11 @@
 		<RepositoryUrl>https://github.com/SirJohnK/LocalizationResourceManager.Maui</RepositoryUrl>
 		<PackageTags>dotnet,dotnetmaui,localization</PackageTags>
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-		<AssemblyVersion>1.0.3.0</AssemblyVersion>
-		<FileVersion>1.0.3.0</FileVersion>
-		<PackageReleaseNotes>- Add AddFileResource setting for registration of file based ResourceManager and create default .resources file, if missing.
-    - ReleaseAllResources manager method to Release All Resources for All registered resources.</PackageReleaseNotes>
-		<Version>1.0.3</Version>
+		<AssemblyVersion>1.0.4.0</AssemblyVersion>
+		<FileVersion>1.0.4.0</FileVersion>
+		<PackageReleaseNotes>- Add SupportNameWithDots setting to activate support for Resource Names with Dots.
+- Add and Update interface comments.</PackageReleaseNotes>
+		<Version>1.0.4</Version>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
