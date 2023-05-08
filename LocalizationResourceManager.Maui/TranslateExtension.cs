@@ -10,10 +10,10 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
 
     public string Text
     {
-        get => LocalizationResourceManager.Current.IsNameWithDotsSupported
-            ? text.Replace(".", LocalizationResourceManager.Current.DotSubstitution)
-            : text;
-        set => text = value;
+        get => text;
+        set => text = LocalizationResourceManager.Current.IsNameWithDotsSupported
+            ? value.Replace(".", LocalizationResourceManager.Current.DotSubstitution)
+            : value;
     }
 
     public string? StringFormat { get; set; }
