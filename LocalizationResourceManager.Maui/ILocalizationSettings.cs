@@ -50,5 +50,13 @@ namespace LocalizationResourceManager.Maui
         /// <remarks>Dots in names will be temporarily replaced by the substitution text when handled by the <see cref="TranslateExtension"/>.</remarks>
         /// <param name="substitution">Replacement text for dots in resource names.</param>
         void SupportNameWithDots(string substitution = "_");
+
+        /// <summary>
+        /// Suppress/Deactive throwing the text not found exception.
+        /// </summary>
+        /// <param name="usePlaceholder">Flag indicating if a placeholder text should be displayed if text is not found. (Optional, Default: <see langword="false"/>)</param>
+        /// <param name="placeholderText">Placeholder text displayed if text is not found, when UsePlaceHolder is activated.</param>
+        /// <remarks>"{0}" in the placeholder text, will be replaced with the resource name.</remarks>
+        void SuppressTextNotFoundException(bool usePlaceholder = false, string placeholderText = "{0}");
     }
 }
