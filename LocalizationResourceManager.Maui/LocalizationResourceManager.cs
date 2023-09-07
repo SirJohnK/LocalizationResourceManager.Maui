@@ -20,6 +20,12 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
 
     internal string DotSubstitution { get; private set; } = "_";
 
+    private bool suppressTextNotFoundException = false;
+
+    private bool usePlaceholder = false;
+
+    private string placeholderText = "{0}";
+
     private LocalizationResourceManager()
     {
         //Init
@@ -131,6 +137,25 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         DotSubstitution = substitution;
     }
 
+    /// <summary>
+    /// Suppress/Deactive throwing the text not found exception.
+    /// </summary>
+    /// <param name="usePlaceholder">Flag indicating if a placeholder text should be displayed if text is not found. (Optional, Default: <see langword="false"/>)</param>
+    /// <param name="placeholderText">Placeholder text displayed if text is not found, when UsePlaceHolder is activated.</param>
+    /// <remarks>"{0}" in the placeholder text, will be replaced with the resource name.</remarks>
+    public void SuppressTextNotFoundException(bool usePlaceholder = false, string placeholderText = "{0}")
+    {
+        //Verify parameters
+        if (string.IsNullOrWhiteSpace(placeholderText)) throw new ArgumentNullException(nameof(placeholderText), "Placeholder text can not be empty!");
+
+        //Activate suppress text not found exception
+        suppressTextNotFoundException = true;
+
+        //Set placeholder settings
+        this.usePlaceholder = usePlaceholder;
+        this.placeholderText = placeholderText;
+    }
+
     #endregion ILocalizationSettings
 
     #region ILocalizationResourceManager
@@ -156,7 +181,7 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         var value = resources?.Select(resource => resource.GetString(text, CurrentCulture)).FirstOrDefault(output => output is not null);
 
         //Return Result
-        return value ?? throw new NullReferenceException($"{nameof(text)}: {text} not found!");
+        return value ?? (suppressTextNotFoundException ? (usePlaceholder ? string.Format(placeholderText, text) : string.Empty) : throw new NullReferenceException($"{nameof(text)}: {text} not found!"));
     }
 
     /// <summary>
