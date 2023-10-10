@@ -24,6 +24,7 @@ Compared to the original solution we have some enhanced and added features:
 - Stores current Default / System culture
 - Supports Resource names with dots.
 - Option to set a placeholder text to be displayed if text is not found.
+- TranslateBindingExtension for custom binding with format and plural support in XAML by [Stephen Quan](https://github.com/stephenquan).
 - Uses the WeakEventHandler (.NET MAUI)
 
 For localized texts used in XAML and/or code behind, we still have:
@@ -73,6 +74,68 @@ When used for localized texts in XAML pages, use the `TranslateExtension`:
     SemanticProperties.Description="{localization:Translate WelcomeToMAUI}"
     SemanticProperties.HeadingLevel="Level2"
     Text="{localization:Translate WelcomeToMAUI}" />
+```
+## Custom binding in XAML
+Use the `TranslateBindingExtension` for custom binding with format and plural support.
+
+*Plural support in XAML*
+
+```xaml
+<Button
+    x:Name="CounterBtn"
+    Clicked="OnCounterClicked"
+    HorizontalOptions="Center"
+    SemanticProperties.Hint="{localization:Translate CounterBtnHint}"
+    Text="{localization:TranslateBinding Count, TranslateFormat=ClickedManyTimes, TranslateOne=ClickedOneTime, TranslateZero=ClickMe}" />
+```
+
+The way it works is:
+
+`TranslateFormat` : (optional) similar to StringFormat, but the format comes from a string resource, e.g. "Clicked {0} times"  
+`TranslateOne` : (optional) similar to StringFormat, but used for when the binding value is one (1), e.g. "Clicked {0} time"  
+`TranslateZero` : (optional) similar to StringFormat, but used for when the binding value is zero (0), e.g. "Click Me"
+
+*Date/Time in XAML*
+
+```csharp
+public DateTime CurrentDateTime { get; set; } = DateTime.Now;
+```
+
+```xaml
+<!-- DateIs string resource: "Date is: {0}" -->
+<Label Text="{localization:TranslateBinding CurrentDateTime, TranslateFormat=DateIs}/"/>
+
+<! -- TimeIs string resource: "Time is: {0:HH}:{0:mm}:{0:ss}" -->
+<Label Text="{localization:TranslateBinding CurrentDateTime, TranslateFormat=TimeIs}/" />
+```
+
+*Currency in XAML*
+
+```csharp
+public decimal Price { get; set; } = 123.45;
+```
+
+```xaml
+<!-- TotalPrice string resource: "Total Price is: {0:C}" -->
+<Label Text="{localization:TranslateBinding Price, TranslateFormat=TotalPrice}" />
+```
+
+*Translate collections in XAML*
+
+`TranslateValue` : (optional) Apply localization changes to a view model, e.g.
+
+```csharp
+public IList<string> Fruits { get; set; } = new List<string> { "LBL_APPLES", "LBL_ORANGES" };
+```
+
+```xaml
+<CollectionView ItemsSource="{Binding Fruits}">
+    <CollectionView.ItemTemplate>
+        <DataTemplate>
+            <Label Text="{localization:TranslateBinding . , TranslateValue=True}"/>
+        <DataTemplate>
+    </CollectionView.ItemTemplate>
+</CollectionView>
 ```
 
 ## Use in Code
