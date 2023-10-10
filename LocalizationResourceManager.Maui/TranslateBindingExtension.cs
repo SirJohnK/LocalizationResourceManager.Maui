@@ -16,25 +16,25 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
     public string StringFormat { get; set; } = "{0}";
 
     /// <inheritdoc/>
-    public IValueConverter Converter { get; set; } = null;
+    public IValueConverter? Converter { get; set; } = null;
 
     /// <inheritdoc/>
-    public object ConverterParameter { get; set; } = null;
+    public object? ConverterParameter { get; set; } = null;
 
     /// <inheritdoc/>
-    public object Source { get; set; } = null;
+    public object? Source { get; set; } = null;
 
     /// <inheritdoc/>
     public bool TranslateValue { get; set; } = false;
 
     /// <inheritdoc/>
-    public string TranslateFormat { get; set; }
+    public string? TranslateFormat { get; set; }
 
     /// <inheritdoc/>
-    public string TranslateOne { get; set; }
+    public string? TranslateOne { get; set; }
 
     /// <inheritdoc/>
-    public string TranslateZero { get; set; }
+    public string? TranslateZero { get; set; }
 
     /// <inheritdoc/>
     public object ProvideValue(IServiceProvider serviceProvider)
@@ -51,67 +51,46 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
             Mode = Mode,
             Bindings = new Collection<BindingBase>
             {
-                new Binding(Path, Mode, Converter, ConverterParameter, null, Source),
-                new Binding(nameof(LocalizationResourceManager.CurrentCulture), BindingMode.OneWay, null, null, null, LocalizationResourceManager.Current)
+                new Binding(Path, Mode, Converter, ConverterParameter, source: Source),
+                new Binding(nameof(LocalizationResourceManager.CurrentCulture), BindingMode.OneWay, source:LocalizationResourceManager.Current)
             }
         };
     }
 
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-        if (values.Length == 0 || values[0] == null)
+        var value = values?.FirstOrDefault();
+        if (value is null)
         {
-            return "";
+            return string.Empty;
         }
 
-        if (!string.IsNullOrEmpty(TranslateZero) && IsZero(values[0]))
+        if (!string.IsNullOrWhiteSpace(TranslateZero) && IsZero(value))
         {
-            return LocalizationResourceManager.Current[TranslateZero, values];
+            return LocalizationResourceManager.Current[TranslateZero, value];
         }
 
-        if (!string.IsNullOrEmpty(TranslateOne) && IsOne(values[0]))
+        if (!string.IsNullOrWhiteSpace(TranslateOne) && IsOne(value))
         {
-            return LocalizationResourceManager.Current[TranslateOne, values];
+            return LocalizationResourceManager.Current[TranslateOne, value];
         }
 
-        if (!string.IsNullOrEmpty(TranslateFormat))
+        if (!string.IsNullOrWhiteSpace(TranslateFormat))
         {
-            return LocalizationResourceManager.Current[TranslateFormat, values];
+            return LocalizationResourceManager.Current[TranslateFormat, value];
         }
 
         if (TranslateValue)
         {
-            return LocalizationResourceManager.Current[values[0].ToString()];
+            return LocalizationResourceManager.Current[$"{value}"];
         }
 
-        return values[0];
+        return value;
     }
 
-    static bool IsZero(object value)
-    {
-        if (value == null)
-        {
-            return false;
-        }
-        if (value.GetType() == typeof(int) && (int)value == 0)
-        {
-            return true;
-        }
-        return false;
-    }
+    private static bool IsZero(object value) => (value is int number && number == 0);
 
-    static bool IsOne(object value)
-    {
-        if (value == null)
-        {
-            return false;
-        }
-        if (value.GetType() == typeof(int) && (int)value == 1)
-        {
-            return true;
-        }
-        return false;
-    }
+    private static bool IsOne(object value) => (value is int number && number == 1);
 
     public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
     {
