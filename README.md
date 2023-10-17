@@ -24,12 +24,12 @@ Compared to the original solution we have some enhanced and added features:
 - Stores current Default / System culture
 - Supports Resource names with dots.
 - Option to set a placeholder text to be displayed if text is not found.
-- TranslateBindingExtension for custom binding with format and plural support in XAML by [Stephen Quan](https://github.com/stephenquan).
-- Uses the WeakEventHandler (.NET MAUI)
+- `TranslateBindingExtension` for custom binding with format and plural support in XAML by [Stephen Quan](https://github.com/stephenquan).
+- Uses the [WeakEventManager](https://learn.microsoft.com/en-us/dotnet/api/microsoft.maui.weakeventmanager) (.NET MAUI)
 
 For localized texts used in XAML and/or code behind, we still have:
-- TranslateExtension (XAML Markup Extension)
-- LocalizedString (Track Culture Change in code behind)
+- `TranslateExtension` (XAML Markup Extension)
+- `LocalizedString` (Track Culture Change in code behind)
 
 ## Setup
 Use the `UseLocalizationResourceManager`builder pattern extension method for library configuration.
