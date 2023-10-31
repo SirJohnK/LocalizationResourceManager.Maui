@@ -37,6 +37,12 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
     public string? TranslateZero { get; set; }
 
     /// <inheritdoc/>
+    public string? TranslateTrue { get; set; }
+
+    /// <inheritdoc/>
+    public string? TranslateFalse { get; set; }
+
+    /// <inheritdoc/>
     public object ProvideValue(IServiceProvider serviceProvider)
     {
         return (this as IMarkupExtension<BindingBase>).ProvideValue(serviceProvider);
@@ -75,6 +81,16 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
             return LocalizationResourceManager.Current[TranslateOne, value];
         }
 
+        if (!string.IsNullOrWhiteSpace(TranslateTrue) && IsTrue(value))
+        {
+            return LocalizationResourceManager.Current[TranslateTrue];
+        }
+
+        if (!string.IsNullOrWhiteSpace(TranslateFalse) && IsFalse(value))
+        {
+            return LocalizationResourceManager.Current[TranslateFalse];
+        }
+
         if (!string.IsNullOrWhiteSpace(TranslateFormat))
         {
             return LocalizationResourceManager.Current[TranslateFormat, value];
@@ -91,6 +107,10 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
     private static bool IsZero(object value) => (value is int number && number == 0);
 
     private static bool IsOne(object value) => (value is int number && number == 1);
+
+    private static bool IsTrue(object value) => (value is bool flag && flag);
+
+    private static bool IsFalse(object value) => (value is bool flag && !flag);
 
     public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
     {

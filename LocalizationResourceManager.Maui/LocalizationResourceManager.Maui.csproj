@@ -27,10 +27,10 @@
 		<RepositoryUrl>https://github.com/SirJohnK/LocalizationResourceManager.Maui</RepositoryUrl>
 		<PackageTags>dotnet,dotnetmaui,localization</PackageTags>
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-		<AssemblyVersion>1.2.0.0</AssemblyVersion>
-		<FileVersion>1.2.0.0</FileVersion>
-		<PackageReleaseNotes>- Add TranslateBindingExtension for custom binding with format and plural support in XAML.</PackageReleaseNotes>
-		<Version>1.2.0</Version>
+		<AssemblyVersion>1.2.1.0</AssemblyVersion>
+		<FileVersion>1.2.1.0</FileVersion>
+		<PackageReleaseNotes>- Add TranslateTrue and TranslateFalse to TranslateBindingExtension.</PackageReleaseNotes>
+		<Version>1.2.1</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
