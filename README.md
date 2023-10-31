@@ -138,6 +138,20 @@ public IList<string> Fruits { get; set; } = new List<string> { "LBL_APPLES", "LB
 </CollectionView>
 ```
 
+*Translate true/false states in XAML*
+
+`TranslateTrue` : (optional) string resource used for when the binding value is true, e.g. "Yes", "On", "Activated"  
+`TranslateFalse` : (optional) string resource used for when the binding value is false, e.g. "No", "Off", "Deactivated"
+
+```csharp
+public bool OrderSent { get; set; } = false;
+```
+
+```xaml
+<!-- Yes/No string resources: "Yes" / "No" -->
+<Label Text="{localization:TranslateBinding OrderSent, TranslateTrue=Yes, TranslateFalse=No}" />
+```
+
 ## Use in Code
 When used to handle localized texts in code behind or ViewModel, use the `LocalizedString` class:
 - Add LocalizedString to code behind or ViewModel to track culture changes
