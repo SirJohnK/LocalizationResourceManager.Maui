@@ -52,6 +52,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+		<PackageReference Include="Syncfusion.Maui.Core" Version="23.2.6" />
 	</ItemGroup>
 
 	<ItemGroup>

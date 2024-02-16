@@ -1,6 +1,7 @@
 ﻿using LocalizationResourceManager.Maui;
 using LocalizationResourceManager.Maui.Sample.Resources;
 using Microsoft.Extensions.Logging;
+using Syncfusion.Maui.Core.Hosting;
 
 namespace LocalizationResourceManager.Maui.Sample
 {
@@ -11,6 +12,7 @@ namespace LocalizationResourceManager.Maui.Sample
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .ConfigureSyncfusionCore()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
