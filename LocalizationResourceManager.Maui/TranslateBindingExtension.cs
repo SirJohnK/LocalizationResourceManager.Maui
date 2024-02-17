@@ -42,6 +42,8 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
     /// <inheritdoc/>
     public string? TranslateFalse { get; set; }
 
+    public string? ResourceManager { get; set; }
+
     /// <inheritdoc/>
     public object ProvideValue(IServiceProvider serviceProvider)
     {
@@ -65,42 +67,26 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
 
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
+        //Get and Verify Current Value
         var value = values?.FirstOrDefault();
-        if (value is null)
-        {
-            return string.Empty;
-        }
+        if (value is null) return string.Empty;
 
-        if (!string.IsNullOrWhiteSpace(TranslateZero) && IsZero(value))
-        {
-            return LocalizationResourceManager.Current[TranslateZero, value];
-        }
+        //Init
+        string? text = null;
+        var resourceManager = LocalizationResourceManager.Current;
 
-        if (!string.IsNullOrWhiteSpace(TranslateOne) && IsOne(value))
-        {
-            return LocalizationResourceManager.Current[TranslateOne, value];
-        }
+        //Get Translation Text
+        if (!string.IsNullOrWhiteSpace(TranslateZero) && IsZero(value)) text = TranslateZero;
+        else if (!string.IsNullOrWhiteSpace(TranslateOne) && IsOne(value)) text = TranslateOne;
+        else if (!string.IsNullOrWhiteSpace(TranslateTrue) && IsTrue(value)) text = TranslateTrue;
+        else if (!string.IsNullOrWhiteSpace(TranslateFalse) && IsFalse(value)) text = TranslateFalse;
+        else if (!string.IsNullOrWhiteSpace(TranslateFormat)) text = TranslateFormat;
+        else if (TranslateValue) text = $"{value}";
 
-        if (!string.IsNullOrWhiteSpace(TranslateTrue) && IsTrue(value))
-        {
-            return LocalizationResourceManager.Current[TranslateTrue];
-        }
+        //Resolve Translation Text
+        if (text is not null) return ResourceManager is null ? resourceManager[text, value] : resourceManager[text, ResourceManager, value];
 
-        if (!string.IsNullOrWhiteSpace(TranslateFalse) && IsFalse(value))
-        {
-            return LocalizationResourceManager.Current[TranslateFalse];
-        }
-
-        if (!string.IsNullOrWhiteSpace(TranslateFormat))
-        {
-            return LocalizationResourceManager.Current[TranslateFormat, value];
-        }
-
-        if (TranslateValue)
-        {
-            return LocalizationResourceManager.Current[$"{value}"];
-        }
-
+        //Return Value since translation was not found or resolved!
         return value;
     }
 

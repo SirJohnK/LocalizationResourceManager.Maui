@@ -16,6 +16,8 @@ namespace LocalizationResourceManager.Maui
         /// <returns>Flag indication if ResourceManager was added successfully</returns>
         bool AddResource(ResourceManager resource);
 
+        bool AddResource(ResourceManager resource, string resourceKey);
+
         /// <summary>
         /// Register file based ResourceManager and create default .resources file, if missing.
         /// </summary>
@@ -25,6 +27,8 @@ namespace LocalizationResourceManager.Maui
         /// <returns>Flag indication if ResourceManager was added successfully</returns>
         /// <exception cref="ArgumentNullException">If baseName or resourceDir is null, empty or whitespace.</exception>
         bool AddFileResource(string baseName, string resourceDir, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors)] Type? usingResourceSet = null);
+
+        bool AddFileResource(string baseName, string resourceDir, string resourceKey, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors)] Type? usingResourceSet = null);
 
         /// <summary>
         /// Set initial/startup culture.

@@ -21,16 +21,16 @@
 		<Title>LocalizationResourceManager.Maui</Title>
 		<Authors>Johan Svensson, Charlin Agramonte, Brandon Minnick, Maksym Koshovyi</Authors>
 		<Description>Enhanced .NET MAUI version of the Xamarin Community Toolkit LocalizationResourceManager.</Description>
-		<Copyright>© 2023 Johan Svensson All Rights Reserved</Copyright>
+		<Copyright>© 2024 Johan Svensson All Rights Reserved</Copyright>
 		<PackageProjectUrl>https://github.com/SirJohnK/LocalizationResourceManager.Maui</PackageProjectUrl>
 		<PackageIcon>sirjohnk.png</PackageIcon>
 		<RepositoryUrl>https://github.com/SirJohnK/LocalizationResourceManager.Maui</RepositoryUrl>
 		<PackageTags>dotnet,dotnetmaui,localization</PackageTags>
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-		<AssemblyVersion>1.2.1.0</AssemblyVersion>
-		<FileVersion>1.2.1.0</FileVersion>
-		<PackageReleaseNotes>- Add TranslateTrue and TranslateFalse to TranslateBindingExtension.</PackageReleaseNotes>
-		<Version>1.2.1</Version>
+		<AssemblyVersion>1.3.0.0</AssemblyVersion>
+		<FileVersion>1.3.0.0</FileVersion>
+		<PackageReleaseNotes>- Add option to add and select a specific ResourceManager.</PackageReleaseNotes>
+		<Version>1.3.0</Version>
 	</PropertyGroup>
 
 	<ItemGroup>

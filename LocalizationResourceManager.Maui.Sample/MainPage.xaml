@@ -35,7 +35,10 @@
                 Clicked="OnCounterClicked"
                 HorizontalOptions="Center"
                 SemanticProperties.Hint="{localization:Translate CounterBtnHint}"
-                Text="{localization:TranslateBinding Count, TranslateFormat=ClickedManyTimes, TranslateOne=ClickedOneTime, TranslateZero=ClickMe}" />
+                Text="{localization:TranslateBinding Count,
+                                                     TranslateFormat=ClickedManyTimes,
+                                                     TranslateOne=ClickedOneTime,
+                                                     TranslateZero=ClickMe}" />
 
             <Label
                 FontSize="Small"
