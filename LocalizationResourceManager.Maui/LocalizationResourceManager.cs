@@ -231,7 +231,7 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         }
 
         //Return Result
-        return value ?? (suppressTextNotFoundException ? (usePlaceholder ? string.Format(placeholderText, text) : string.Empty) : throw new NullReferenceException($"{nameof(text)}: {text} not found!"));
+        return value ?? (suppressTextNotFoundException ? (usePlaceholder ? string.Format(placeholderText, text) : string.Empty) : throw new NullReferenceException($"{nameof(text)}: '{text}' not found!"));
     }
 
     public string GetValue(string text, string resourceManager)
@@ -249,7 +249,7 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         }
 
         //Return Result
-        return value ?? (suppressTextNotFoundException ? (usePlaceholder ? string.Format(placeholderText, text) : string.Empty) : throw new NullReferenceException($"{nameof(text)}: {text} not found!"));
+        return value ?? (suppressTextNotFoundException ? (usePlaceholder ? string.Format(placeholderText, $"{resourceManager}/{text}") : string.Empty) : throw new NullReferenceException($"{nameof(text)}: '{$"{resourceManager}/{text}"}' not found!"));
     }
 
     /// <summary>

@@ -41,5 +41,10 @@ namespace LocalizationResourceManager.Maui.Sample
             var index = languages.IndexOf(culture.TwoLetterISOLanguageName);
             resourceManager.CurrentCulture = new CultureInfo(languages[++index < languages.Count ? index : 0]);
         }
+
+        private void SpecificPage_Button_Clicked(object sender, EventArgs e)
+        {
+            Shell.Current.GoToAsync(nameof(SpecificPage));
+        }
     }
 }

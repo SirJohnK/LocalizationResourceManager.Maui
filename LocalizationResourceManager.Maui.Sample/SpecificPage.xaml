@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="LocalizationResourceManager.Maui.Sample.SpecificPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
+    Title="{localization:Translate Title,
+                                   ResourceManager=SpecificPage}">
+
+    <VerticalStackLayout>
+        <Label FontSize="Medium">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Title: " />
+                    <Span Text="{localization:Translate Title}" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+        <Label FontSize="Medium">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Title: " />
+                    <Span Text="{localization:Translate Title, ResourceManager=SpecificPage}" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+        <Label FontSize="Medium">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Title: " />
+                    <Span Text="{localization:Translate Title, ResourceManager=MissingPage}" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+        <Button
+            x:Name="ToggleLanguageBtn"
+            Clicked="OnToggleLanguage"
+            HorizontalOptions="Center"
+            Text="{localization:Translate ToggleLanguage}" />
+    </VerticalStackLayout>
+</ContentPage>

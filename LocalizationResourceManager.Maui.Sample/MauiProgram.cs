@@ -19,11 +19,14 @@ namespace LocalizationResourceManager.Maui.Sample
                 .UseLocalizationResourceManager(settings =>
                 {
                     settings.AddResource(AppResources.ResourceManager);
+                    settings.AddResource(SpecificResources.ResourceManager, nameof(SpecificPage));
+                    settings.SuppressTextNotFoundException(true, "'{0}' not found!");
                     settings.RestoreLatestCulture(true);
                 });
 
             //Add Views
-            builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddTransient<MainPage>();
+            builder.Services.AddTransient<SpecificPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();

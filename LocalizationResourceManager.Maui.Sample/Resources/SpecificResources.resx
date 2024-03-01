@@ -117,37 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BotDescription" xml:space="preserve">
-    <value>Cute dot net bot waving hi to you!</value>
-  </data>
-  <data name="ClickedManyTimes" xml:space="preserve">
-    <value>Clicked {0} times</value>
-  </data>
-  <data name="ClickedOneTime" xml:space="preserve">
-    <value>Clicked {0} time</value>
-  </data>
-  <data name="ClickMe" xml:space="preserve">
-    <value>Click me</value>
-  </data>
-  <data name="CounterBtnHint" xml:space="preserve">
-    <value>Counts the number of times you click</value>
-  </data>
-  <data name="Hello" xml:space="preserve">
-    <value>Hello</value>
-  </data>
-  <data name="Home" xml:space="preserve">
-    <value>Home</value>
-  </data>
   <data name="Title" xml:space="preserve">
-    <value>Home</value>
-  </data>
-  <data name="ToggleLanguage" xml:space="preserve">
-    <value>Toggle language</value>
-  </data>
-  <data name="WelcomeToMAUI" xml:space="preserve">
-    <value>Welcome to dot net Multi platform App U I</value>
-  </data>
-  <data name="World" xml:space="preserve">
-    <value>World</value>
+    <value>Specific Resources</value>
   </data>
 </root>

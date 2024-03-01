@@ -30,7 +30,7 @@
 		<AssemblyVersion>1.3.0.0</AssemblyVersion>
 		<FileVersion>1.3.0.0</FileVersion>
 		<PackageReleaseNotes>- Add option to add and select a specific ResourceManager.</PackageReleaseNotes>
-		<Version>1.3.0</Version>
+		<Version>1.3.0-alpha.1</Version>
 	</PropertyGroup>
 
 	<ItemGroup>

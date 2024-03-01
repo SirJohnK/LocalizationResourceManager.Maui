@@ -50,6 +50,11 @@
                 Clicked="OnToggleLanguage"
                 HorizontalOptions="Center"
                 Text="{localization:Translate ToggleLanguage}" />
+
+            <Button
+                Clicked="SpecificPage_Button_Clicked"
+                HorizontalOptions="Center"
+                Text="Specific Page" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

@@ -124,6 +124,15 @@ namespace LocalizationResourceManager.Maui.Sample.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        internal static string Title {
+            get {
+                return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Toggle language.
         /// </summary>
         internal static string ToggleLanguage {
