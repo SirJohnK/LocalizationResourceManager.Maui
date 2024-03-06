@@ -18,6 +18,10 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
 
     public string? StringFormat { get; set; }
 
+    public IValueConverter? Converter { get; set; }
+
+    public object? ConverterParameter { get; set; }
+
     object IMarkupExtension.ProvideValue(IServiceProvider serviceProvider) => ProvideValue(serviceProvider);
 
     public BindingBase ProvideValue(IServiceProvider serviceProvider)
@@ -34,7 +38,9 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
             Mode = BindingMode.OneWay,
             Path = $"[{Text}]",
             Source = LocalizationResourceManager.Current,
-            StringFormat = StringFormat
+            StringFormat = StringFormat,
+            Converter = Converter,
+            ConverterParameter = ConverterParameter
         };
         return binding;
     }
