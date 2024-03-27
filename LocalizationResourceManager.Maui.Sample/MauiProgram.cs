@@ -1,6 +1,5 @@
-﻿using LocalizationResourceManager.Maui;
+﻿using Microsoft.Extensions.Logging;
 using LocalizationResourceManager.Maui.Sample.Resources;
-using Microsoft.Extensions.Logging;
 
 namespace LocalizationResourceManager.Maui.Sample
 {

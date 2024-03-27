@@ -1,5 +1,4 @@
-﻿using LocalizationResourceManager.Maui.Sample.Resources;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace LocalizationResourceManager.Maui.Sample
 {

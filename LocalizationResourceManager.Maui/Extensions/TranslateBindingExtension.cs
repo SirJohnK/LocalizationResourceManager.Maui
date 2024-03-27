@@ -52,6 +52,9 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
 
     BindingBase IMarkupExtension<BindingBase>.ProvideValue(IServiceProvider serviceProvider)
     {
+        if (LocalizationResourceManager.Current.HasKeyedResources)
+            ResourceManager ??= (serviceProvider.GetService<IRootObjectProvider>()?.RootObject as ISpecificResourceManager)?.ResourceManager;
+
         return new MultiBinding()
         {
             StringFormat = StringFormat,

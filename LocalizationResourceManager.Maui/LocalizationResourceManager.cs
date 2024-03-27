@@ -22,6 +22,10 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
 
     internal string DotSubstitution { get; private set; } = "_";
 
+    internal bool HasKeyedResources { get; private set; } = false;
+
+    internal IServiceCollection? Services { get; set; }
+
     private bool suppressTextNotFoundException = false;
 
     private bool usePlaceholder = false;
@@ -68,6 +72,8 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
             if (AddResource(resource))
             {
                 keyedResources.Add(resourceKey, resource);
+                Services?.AddKeyedSingleton<ILocalizationResourceManager>(resourceKey, new SpecificLocalizationResourceManager(resourceKey));
+                HasKeyedResources = true;
                 return true;
             }
             else
@@ -126,6 +132,8 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
             if (AddFileResource(baseName, resourceDir, usingResourceSet))
             {
                 keyedResources.Add(baseName, resources.Last());
+                Services?.AddKeyedSingleton<ILocalizationResourceManager>(resourceKey, new SpecificLocalizationResourceManager(resourceKey));
+                HasKeyedResources = true;
                 return true;
             }
             else

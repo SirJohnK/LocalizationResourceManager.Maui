@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace LocalizationResourceManager.Maui;
+﻿namespace LocalizationResourceManager.Maui;
 
 /// <summary>
 /// Markup extension (XAML) for handling and updating localized string by tracking current culture from current localization resource manager.
@@ -20,12 +18,16 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
 
     public string? StringFormat { get; set; }
 
+    public IValueConverter? Converter { get; set; }
+
+    public object? ConverterParameter { get; set; }
+
     private string? resourceManager;
 
     public string? ResourceManager
     {
         get => resourceManager;
-        set => resourceManager = $"rm://{value}/";
+        set => resourceManager = value is not null ? $"rm://{value}/" : value;
     }
 
     object IMarkupExtension.ProvideValue(IServiceProvider serviceProvider) => ProvideValue(serviceProvider);
@@ -39,12 +41,17 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
 
         #endregion Required work-around to prevent linker from removing the implementation
 
+        if (LocalizationResourceManager.Current.HasKeyedResources)
+            ResourceManager ??= (serviceProvider.GetService<IRootObjectProvider>()?.RootObject as ISpecificResourceManager)?.ResourceManager;
+
         var binding = new Binding
         {
             Mode = BindingMode.OneWay,
             Path = $"[{resourceManager}{Text}]",
             Source = LocalizationResourceManager.Current,
-            StringFormat = StringFormat
+            StringFormat = StringFormat,
+            Converter = Converter,
+            ConverterParameter = ConverterParameter
         };
         return binding;
     }
