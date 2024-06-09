@@ -25,8 +25,12 @@ namespace LocalizationResourceManager.Maui.Sample
             InitializeComponent();
             this.resourceManager = resourceManager;
 
-            HelloWorld = new(() => $"{resourceManager["Hello"]}, {resourceManager["World"]}!");
+            var test = LocalizedString(() => "Hello, Hello!");
+
+            HelloWorld = resourceManager.LocalizedString(new(() => $"{resourceManager["Hello"]}, {resourceManager["World"]}!"));
             CurrentCulture = new(() => resourceManager.CurrentCulture.NativeName);
+
+            LocalizedString newtest = delegate () { return resourceManager["Hello"]; };
 
             BindingContext = this;
         }

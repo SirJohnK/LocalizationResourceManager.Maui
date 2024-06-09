@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel;
+using System.Globalization;
 using System.Resources;
 
 namespace LocalizationResourceManager.Maui
@@ -6,7 +7,7 @@ namespace LocalizationResourceManager.Maui
     /// <summary>
     /// Interface for Localization Resource Manager
     /// </summary>
-    public interface ILocalizationResourceManager
+    public interface ILocalizationResourceManager : INotifyPropertyChanged
     {
         /// <summary>
         /// Get Default / System culture.
@@ -18,6 +19,10 @@ namespace LocalizationResourceManager.Maui
         /// </summary>
         CultureInfo CurrentCulture { get; set; }
 
+        bool IsNameWithDotsSupported { get; }
+
+        string DotSubstitution { get; }
+
         /// <summary>
         /// Get resource text value for <see cref="CurrentCulture"/>.
         /// </summary>
@@ -26,7 +31,7 @@ namespace LocalizationResourceManager.Maui
         /// <returns>Found resource text value.</returns>
         string GetValue(string text);
 
-        string GetValue(string text, string resourceManager);
+        string GetValue(string text, ResourceManager resource);
 
         /// <summary>
         /// Get formatted resource text value for <see cref="CurrentCulture"/> with specified parameters.
@@ -40,7 +45,7 @@ namespace LocalizationResourceManager.Maui
         /// <returns>Formatted resource text value.</returns>
         string GetValue(string text, params object[] arguments);
 
-        string GetValue(string text, string resourceManager, params object[] arguments);
+        string GetValue(string text, ResourceManager resource, params object[] arguments);
 
         /// <summary>
         /// Indexer property to Get resource text value for <see cref="CurrentCulture"/>.
@@ -50,7 +55,7 @@ namespace LocalizationResourceManager.Maui
         /// <returns>Found resource text value.</returns>
         string this[string text] { get; }
 
-        string this[string text, string resourceManager] { get; }
+        string this[string text, ResourceManager resource] { get; }
 
         /// <summary>
         /// Indexer property to Get formatted resource text value for <see cref="CurrentCulture"/> with specified parameters.
@@ -64,7 +69,7 @@ namespace LocalizationResourceManager.Maui
         /// <returns>Formatted resource text value.</returns>
         string this[string text, params object[] arguments] { get; }
 
-        string this[string text, string resourceManager, params object[] arguments] { get; }
+        string this[string text, ResourceManager resource, params object[] arguments] { get; }
 
         /// <summary>
         /// Release All Resources for All registered resources.

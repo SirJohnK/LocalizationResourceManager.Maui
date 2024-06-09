@@ -6,15 +6,7 @@
 [ContentProperty(nameof(Text))]
 public class TranslateExtension : IMarkupExtension<BindingBase>
 {
-    private string text = string.Empty;
-
-    public string Text
-    {
-        get => text;
-        set => text = LocalizationResourceManager.Current.IsNameWithDotsSupported
-            ? value.Replace(".", LocalizationResourceManager.Current.DotSubstitution)
-            : value;
-    }
+    public string Text { get; set; } = string.Empty;
 
     public string? StringFormat { get; set; }
 
@@ -22,37 +14,40 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
 
     public object? ConverterParameter { get; set; }
 
-    private string? resourceManager;
-
-    public string? ResourceManager
-    {
-        get => resourceManager;
-        set => resourceManager = value is not null ? $"rm://{value}/" : value;
-    }
+    public string? ResourceManager { get; set; }
 
     object IMarkupExtension.ProvideValue(IServiceProvider serviceProvider) => ProvideValue(serviceProvider);
 
+    [Microsoft.Maui.Controls.Internals.Preserve(Conditional = true)]
     public BindingBase ProvideValue(IServiceProvider serviceProvider)
     {
-        #region Required work-around to prevent linker from removing the implementation
+        //Init
+        ILocalizationResourceManager? resources = null;
 
-        if (DateTime.Now.Ticks < 0)
-            _ = LocalizationResourceManager.Current[Text];
+        //Check if specific resource manager is specified!
+        ResourceManager ??= (serviceProvider.GetService<IRootObjectProvider>()?.RootObject as ISpecificResourceManager)?.ResourceManager;
 
-        #endregion Required work-around to prevent linker from removing the implementation
+        //Get Localization Resource Manager
+        if (ResourceManager is null)
+            resources = serviceProvider.GetRequiredService<ILocalizationResourceManager>();
+        else
+            resources = serviceProvider.GetRequiredKeyedService<ILocalizationResourceManager>(ResourceManager);
 
-        if (LocalizationResourceManager.Current.HasKeyedResources)
-            ResourceManager ??= (serviceProvider.GetService<IRootObjectProvider>()?.RootObject as ISpecificResourceManager)?.ResourceManager;
+        //Check if name with dots is supported and adjust Text!
+        Text = resources.IsNameWithDotsSupported ? Text.Replace(".", resources.DotSubstitution) : Text;
 
+        //Create Binding
         var binding = new Binding
         {
             Mode = BindingMode.OneWay,
-            Path = $"[{resourceManager}{Text}]",
-            Source = LocalizationResourceManager.Current,
+            Path = $"[{Text}]",
+            Source = resources,
             StringFormat = StringFormat,
             Converter = Converter,
             ConverterParameter = ConverterParameter
         };
+
+        //Return Binding
         return binding;
     }
 }

@@ -1,11 +1,14 @@
 ﻿using System.Collections.ObjectModel;
 using System.Globalization;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace LocalizationResourceManager.Maui;
 
 [ContentProperty(nameof(Path))]
 public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiValueConverter
 {
+    private ILocalizationResourceManager? resources = null;
+
     /// <inheritdoc/>
     public string Path { get; set; } = ".";
 
@@ -52,8 +55,14 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
 
     BindingBase IMarkupExtension<BindingBase>.ProvideValue(IServiceProvider serviceProvider)
     {
-        if (LocalizationResourceManager.Current.HasKeyedResources)
-            ResourceManager ??= (serviceProvider.GetService<IRootObjectProvider>()?.RootObject as ISpecificResourceManager)?.ResourceManager;
+        //Check if specific resource manager is specified!
+        ResourceManager ??= (serviceProvider.GetService<IRootObjectProvider>()?.RootObject as ISpecificResourceManager)?.ResourceManager;
+
+        //Get Localization Resource Manager
+        if (ResourceManager is null)
+            resources = serviceProvider.GetRequiredService<ILocalizationResourceManager>();
+        else
+            resources = serviceProvider.GetRequiredKeyedService<ILocalizationResourceManager>(ResourceManager);
 
         return new MultiBinding()
         {
@@ -63,7 +72,7 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
             Bindings = new Collection<BindingBase>
             {
                 new Binding(Path, Mode, Converter, ConverterParameter, source: Source),
-                new Binding(nameof(LocalizationResourceManager.CurrentCulture), BindingMode.OneWay, source:LocalizationResourceManager.Current)
+                new Binding(nameof(ILocalizationResourceManager.CurrentCulture), BindingMode.OneWay, source:resources)
             }
         };
     }
@@ -76,7 +85,6 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
 
         //Init
         string? text = null;
-        var resourceManager = LocalizationResourceManager.Current;
 
         //Get Translation Text
         if (!string.IsNullOrWhiteSpace(TranslateZero) && IsZero(value)) text = TranslateZero;
@@ -87,7 +95,14 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
         else if (TranslateValue) text = $"{value}";
 
         //Resolve Translation Text
-        if (text is not null) return ResourceManager is null ? resourceManager[text, value] : resourceManager[text, ResourceManager, value];
+        if (resources is not null && text is not null)
+        {
+            //Check if name with dots is supported and adjust Text!
+            text = resources.IsNameWithDotsSupported ? text.Replace(".", resources.DotSubstitution) : text;
+
+            //Attempt to Resolve Translation Text!
+            return resources[text, value];
+        }
 
         //Return Value since translation was not found or resolved!
         return value;

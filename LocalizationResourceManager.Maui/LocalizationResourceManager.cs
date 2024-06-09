@@ -11,20 +11,13 @@ namespace LocalizationResourceManager.Maui;
 /// </summary>
 public class LocalizationResourceManager : ObservableObject, ILocalizationResourceManager, ILocalizationSettings
 {
-    private static readonly Lazy<LocalizationResourceManager> currentHolder = new(() => new LocalizationResourceManager());
+    private static readonly Lazy<ILocalizationResourceManager> currentHolder = new(() => new LocalizationResourceManager());
 
-    internal static LocalizationResourceManager Current => currentHolder.Value;
+    internal static ILocalizationResourceManager Current => currentHolder.Value;
 
     private List<ResourceManager> resources = [];
-    private Dictionary<string, ResourceManager> keyedResources = [];
 
-    internal bool IsNameWithDotsSupported { get; private set; } = false;
-
-    internal string DotSubstitution { get; private set; } = "_";
-
-    internal bool HasKeyedResources { get; private set; } = false;
-
-    internal IServiceCollection? Services { get; set; }
+    private readonly IServiceCollection services;
 
     private bool suppressTextNotFoundException = false;
 
@@ -32,9 +25,10 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
 
     private string placeholderText = "{0}";
 
-    private LocalizationResourceManager()
+    public LocalizationResourceManager(IServiceCollection services)
     {
         //Init
+        this.services = services;
         DefaultCulture = CultureInfo.CurrentCulture;
     }
 
@@ -71,9 +65,7 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         {
             if (AddResource(resource))
             {
-                keyedResources.Add(resourceKey, resource);
-                Services?.AddKeyedSingleton<ILocalizationResourceManager>(resourceKey, new SpecificLocalizationResourceManager(resourceKey));
-                HasKeyedResources = true;
+                services.AddKeyedSingleton<ILocalizationResourceManager>(resourceKey, new SpecificLocalizationResourceManager(this, resource));
                 return true;
             }
             else
@@ -85,38 +77,23 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         }
     }
 
-    /// <summary>
-    /// Register file based ResourceManager and create default .resources file, if missing.
-    /// </summary>
-    /// <param name="baseName">The root name of the resource.</param>
-    /// <param name="resourceDir">Path to resource directory.</param>
-    /// <param name="usingResourceSet">Optional, Type of the ResourceSet the ResourceManager uses to construct ResourceSets.</param>
-    /// <returns>Flag indication if ResourceManager was added successfully</returns>
-    /// <exception cref="ArgumentNullException">If baseName or resourceDir is null, empty or whitespace.</exception>
-    public bool AddFileResource(string baseName, string resourceDir, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors)] Type? usingResourceSet = null)
+    private bool AddFileResource(string baseName, string resourceDir, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors)] Type? usingResourceSet = null, string? resourceKey = null)
     {
         //Verify parameters
         if (string.IsNullOrWhiteSpace(baseName)) throw new ArgumentNullException(nameof(baseName));
         if (string.IsNullOrWhiteSpace(resourceDir)) throw new ArgumentNullException(nameof(resourceDir));
 
+        //Check if default .resources file exits!
+        var resourceFileName = Path.Combine(resourceDir, $"{baseName}.resources");
+        if (!File.Exists(resourceFileName)) throw new FileNotFoundException($"Default .resources file not found: {resourceFileName}");
+
         try
         {
-            //Init
-            var resourceFileName = Path.Combine(resourceDir, $"{baseName}.resources");
-
-            //Check if default .resources file exits, otherwise create it!
-            if (!File.Exists(resourceFileName))
-            {
-                //Attempt to create default .resources file!
-                using (var writer = new ResourceWriter(resourceFileName))
-                {
-                    //Add default empty string resource
-                    writer.AddResource(string.Empty, string.Empty);
-                }
-            }
-
             //Create and register file based ResourceManager
-            return AddResource(ResourceManager.CreateFileBasedResourceManager(baseName, resourceDir, usingResourceSet));
+            if (resourceKey is null)
+                return AddResource(ResourceManager.CreateFileBasedResourceManager(baseName, resourceDir, usingResourceSet));
+            else
+                return AddResource(ResourceManager.CreateFileBasedResourceManager(baseName, resourceDir, usingResourceSet), resourceKey);
         }
         catch (Exception)
         {
@@ -125,24 +102,24 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         }
     }
 
+    /// <summary>
+    /// Register file based ResourceManager.
+    /// </summary>
+    /// <param name="baseName">The root name of the resource.</param>
+    /// <param name="resourceDir">Path to resource directory.</param>
+    /// <param name="usingResourceSet">Optional, Type of the ResourceSet the ResourceManager uses to construct ResourceSets.</param>
+    /// <returns>Flag indication if ResourceManager was added successfully</returns>
+    /// <exception cref="ArgumentNullException">If baseName or resourceDir is null, empty or whitespace.</exception>
+    public bool AddFileResource(string baseName, string resourceDir, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors)] Type? usingResourceSet = null)
+    {
+        //Attempt to Register file based ResourceManager
+        return AddFileResource(baseName, resourceDir, usingResourceSet);
+    }
+
     public bool AddFileResource(string baseName, string resourceDir, string resourceKey, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors)] Type? usingResourceSet = null)
     {
-        try
-        {
-            if (AddFileResource(baseName, resourceDir, usingResourceSet))
-            {
-                keyedResources.Add(baseName, resources.Last());
-                Services?.AddKeyedSingleton<ILocalizationResourceManager>(resourceKey, new SpecificLocalizationResourceManager(resourceKey));
-                HasKeyedResources = true;
-                return true;
-            }
-            else
-                return false;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
+        //Attempt to Register file based ResourceManager
+        return AddFileResource(baseName, resourceDir, usingResourceSet, resourceKey);
     }
 
     /// <summary>
@@ -206,97 +183,16 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
 
     #region ILocalizationResourceManager
 
+    private string DefaultCultureName => Preferences.Get(nameof(DefaultCulture), CultureInfo.CurrentCulture.Name);
+
     /// <summary>
-    /// Get resource text value for <see cref="CurrentCulture"/>.
+    /// Get/Set Default / System culture.
     /// </summary>
-    /// <param name="text">Resource name.</param>
-    /// <remarks>Will search all registered resources, in the order they were added, until first match is found!</remarks>
-    /// <returns>Found resource text value.</returns>
-    /// <exception cref="InvalidOperationException">Will be thrown if no resources are added.</exception>
-    /// <exception cref="NullReferenceException">Will be thrown if no resource was found.</exception>
-    public string GetValue(string text)
+    public CultureInfo DefaultCulture
     {
-        //Verify Resources
-        if ((resources?.Count ?? 0) == 0)
-            throw new InvalidOperationException($"At least one resource must be added with Settings.{nameof(AddResource)}!");
-
-        //Init
-        string? value = null;
-
-        //Check if ResourceManager is specified
-        if (text.StartsWith("rm://"))
-        {
-            var textValues = text[5..].Split("/");
-            value = GetValue(textValues[1], textValues[0]);
-        }
-        else
-        {
-            //If supported, handle names with dots!
-            text = IsNameWithDotsSupported ? text.Replace(DotSubstitution, ".") : text;
-
-            //Attemp to get localized string with Current Culture
-            value = resources?.Select(resource => resource.GetString(text, CurrentCulture)).FirstOrDefault(output => output is not null);
-        }
-
-        //Return Result
-        return value ?? (suppressTextNotFoundException ? (usePlaceholder ? string.Format(placeholderText, text) : string.Empty) : throw new NullReferenceException($"{nameof(text)}: '{text}' not found!"));
+        get => CultureInfo.GetCultureInfo(DefaultCultureName);
+        private set => Preferences.Set(nameof(DefaultCulture), value.Name);
     }
-
-    public string GetValue(string text, string resourceManager)
-    {
-        //Init
-        string? value = null;
-
-        if (keyedResources?.TryGetValue(resourceManager, out var resource) ?? false)
-        {
-            //If supported, handle names with dots!
-            text = IsNameWithDotsSupported ? text.Replace(DotSubstitution, ".") : text;
-
-            //Attemp to get localized string with Current Culture
-            value = resource.GetString(text, CurrentCulture);
-        }
-
-        //Return Result
-        return value ?? (suppressTextNotFoundException ? (usePlaceholder ? string.Format(placeholderText, $"{resourceManager}/{text}") : string.Empty) : throw new NullReferenceException($"{nameof(text)}: '{$"{resourceManager}/{text}"}' not found!"));
-    }
-
-    /// <summary>
-    /// Get formatted resource text value for <see cref="CurrentCulture"/> with specified parameters.
-    /// </summary>
-    /// <param name="text">Resource name.</param>
-    /// <param name="arguments">Parameters used when formatting resource text value.</param>
-    /// <remarks>
-    /// Uses <see cref="string.Format(string, object?[])"/> syntax.
-    /// Will search all registered resources, in the order they were added, until first match is found!
-    /// </remarks>
-    /// <returns>Formatted resource text value.</returns>
-    public string GetValue(string text, params object[] arguments) => string.Format(GetValue(text), arguments);
-
-    public string GetValue(string text, string resourceManager, params object[] arguments) => string.Format(GetValue(text, resourceManager), arguments);
-
-    /// <summary>
-    /// Indexer property to Get resource text value for <see cref="CurrentCulture"/>.
-    /// </summary>
-    /// <param name="text">Resource name.</param>
-    /// <remarks>Will search all registered resources, in the order they were added, until first match is found!</remarks>
-    /// <returns>Found resource text value.</returns>
-    public string this[string text] => GetValue(text);
-
-    public string this[string text, string resourceManager] => GetValue(text, resourceManager);
-
-    /// <summary>
-    /// Indexer property to Get formatted resource text value for <see cref="CurrentCulture"/> with specified parameters.
-    /// </summary>
-    /// <param name="text">Resource name.</param>
-    /// <param name="arguments">Parameters used when formatting resource text value.</param>
-    /// <remarks>
-    /// Uses <see cref="string.Format(string, object?[])"/> syntax.
-    /// Will search all registered resources, in the order they were added, until first match is found!
-    /// </remarks>
-    /// <returns>Formatted resource text value.</returns>
-    public string this[string text, params object[] arguments] => GetValue(text, arguments);
-
-    public string this[string text, string resourceManager, params object[] arguments] => GetValue(text, resourceManager, arguments);
 
     private CultureInfo currentCulture = CultureInfo.CurrentCulture;
 
@@ -317,16 +213,83 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         }
     }
 
-    private string DefaultCultureName => Preferences.Get(nameof(DefaultCulture), CultureInfo.CurrentCulture.Name);
+    public bool IsNameWithDotsSupported { get; private set; } = false;
+
+    public string DotSubstitution { get; private set; } = "_";
 
     /// <summary>
-    /// Get/Set Default / System culture.
+    /// Get resource text value for <see cref="CurrentCulture"/>.
     /// </summary>
-    public CultureInfo DefaultCulture
+    /// <param name="text">Resource name.</param>
+    /// <remarks>Will search all registered resources, in the order they were added, until first match is found!</remarks>
+    /// <returns>Found resource text value.</returns>
+    /// <exception cref="InvalidOperationException">Will be thrown if no resources are added.</exception>
+    /// <exception cref="NullReferenceException">Will be thrown if no resource was found.</exception>
+    public string GetValue(string text)
     {
-        get => CultureInfo.GetCultureInfo(DefaultCultureName);
-        private set => Preferences.Set(nameof(DefaultCulture), value.Name);
+        //Verify Resources
+        if ((resources?.Count ?? 0) == 0)
+            throw new InvalidOperationException($"At least one resource must be added with Settings.{nameof(AddResource)}!");
+
+        //If supported, handle names with dots!
+        text = IsNameWithDotsSupported ? text.Replace(DotSubstitution, ".") : text;
+
+        //Attemp to get localized string with Current Culture
+        var value = resources?.Select(resource => resource.GetString(text, CurrentCulture)).FirstOrDefault(output => output is not null);
+
+        //Return Result
+        return value ?? (suppressTextNotFoundException ? (usePlaceholder ? string.Format(placeholderText, text) : string.Empty) : throw new NullReferenceException($"{nameof(text)}: '{text}' not found!"));
     }
+
+    public string GetValue(string text, ResourceManager resource)
+    {
+        //If supported, handle names with dots!
+        text = IsNameWithDotsSupported ? text.Replace(DotSubstitution, ".") : text;
+
+        //Attemp to get localized string with Current Culture
+        var value = resource.GetString(text, CurrentCulture);
+
+        //Return Result
+        return value ?? (suppressTextNotFoundException ? (usePlaceholder ? string.Format(placeholderText, $"{resource.BaseName}/{text}") : string.Empty) : throw new NullReferenceException($"{nameof(text)}: '{$"{resource.BaseName}/{text}"}' not found!"));
+    }
+
+    /// <summary>
+    /// Get formatted resource text value for <see cref="CurrentCulture"/> with specified parameters.
+    /// </summary>
+    /// <param name="text">Resource name.</param>
+    /// <param name="arguments">Parameters used when formatting resource text value.</param>
+    /// <remarks>
+    /// Uses <see cref="string.Format(string, object?[])"/> syntax.
+    /// Will search all registered resources, in the order they were added, until first match is found!
+    /// </remarks>
+    /// <returns>Formatted resource text value.</returns>
+    public string GetValue(string text, params object[] arguments) => string.Format(GetValue(text), arguments);
+
+    public string GetValue(string text, ResourceManager resource, params object[] arguments) => string.Format(GetValue(text, resource), arguments);
+
+    /// <summary>
+    /// Indexer property to Get resource text value for <see cref="CurrentCulture"/>.
+    /// </summary>
+    /// <param name="text">Resource name.</param>
+    /// <remarks>Will search all registered resources, in the order they were added, until first match is found!</remarks>
+    /// <returns>Found resource text value.</returns>
+    public string this[string text] => GetValue(text);
+
+    public string this[string text, ResourceManager resource] => GetValue(text, resource);
+
+    /// <summary>
+    /// Indexer property to Get formatted resource text value for <see cref="CurrentCulture"/> with specified parameters.
+    /// </summary>
+    /// <param name="text">Resource name.</param>
+    /// <param name="arguments">Parameters used when formatting resource text value.</param>
+    /// <remarks>
+    /// Uses <see cref="string.Format(string, object?[])"/> syntax.
+    /// Will search all registered resources, in the order they were added, until first match is found!
+    /// </remarks>
+    /// <returns>Formatted resource text value.</returns>
+    public string this[string text, params object[] arguments] => GetValue(text, arguments);
+
+    public string this[string text, ResourceManager resource, params object[] arguments] => GetValue(text, resource, arguments);
 
     /// <summary>
     /// Release All Resources for All registered resources.

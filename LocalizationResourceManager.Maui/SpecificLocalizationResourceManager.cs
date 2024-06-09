@@ -1,28 +1,40 @@
-﻿using System.Globalization;
+﻿using System.Resources;
+using System.Globalization;
+using System.ComponentModel;
+using LocalizationResourceManager.Maui.ComponentModel;
 
 namespace LocalizationResourceManager.Maui;
 
-public class SpecificLocalizationResourceManager(string resourceManager) : ILocalizationResourceManager
+public class SpecificLocalizationResourceManager(ILocalizationResourceManager resourceManager, ResourceManager resource) : ObservableObject, ILocalizationResourceManager
 {
-    public string this[string text] => LocalizationResourceManager.Current[text, resourceManager];
+    public CultureInfo DefaultCulture => resourceManager.DefaultCulture;
 
-    public string this[string text, string resourceManager] => LocalizationResourceManager.Current[text, resourceManager];
+    public CultureInfo CurrentCulture { get => resourceManager.CurrentCulture; set => resourceManager.CurrentCulture = value; }
 
-    public string this[string text, params object[] arguments] => LocalizationResourceManager.Current[text, resourceManager, arguments];
+    public bool IsNameWithDotsSupported => resourceManager.IsNameWithDotsSupported;
 
-    public string this[string text, string resourceManager, params object[] arguments] => LocalizationResourceManager.Current[text, resourceManager, arguments];
+    public string DotSubstitution => resourceManager.DotSubstitution;
 
-    public CultureInfo DefaultCulture => LocalizationResourceManager.Current.DefaultCulture;
+    public string this[string text] => resourceManager[text, resource];
 
-    public CultureInfo CurrentCulture { get => LocalizationResourceManager.Current.CurrentCulture; set => LocalizationResourceManager.Current.CurrentCulture = value; }
+    public string this[string text, ResourceManager resource] => resourceManager[text, resource];
 
-    public string GetValue(string text) => LocalizationResourceManager.Current.GetValue(text, resourceManager);
+    public string this[string text, params object[] arguments] => resourceManager[text, resource, arguments];
 
-    public string GetValue(string text, string resourceManager) => LocalizationResourceManager.Current.GetValue(text, resourceManager);
+    public string this[string text, ResourceManager resource, params object[] arguments] => resourceManager[text, resource, arguments];
 
-    public string GetValue(string text, params object[] arguments) => LocalizationResourceManager.Current.GetValue(text, resourceManager, arguments);
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+    }
 
-    public string GetValue(string text, string resourceManager, params object[] arguments) => LocalizationResourceManager.Current.GetValue(text, resourceManager, arguments);
+    public string GetValue(string text) => resourceManager.GetValue(text, resource);
 
-    public void ReleaseAllResources() => LocalizationResourceManager.Current.ReleaseAllResources();
+    public string GetValue(string text, ResourceManager resource) => resourceManager.GetValue(text, resource);
+
+    public string GetValue(string text, params object[] arguments) => resourceManager.GetValue(text, resource, arguments);
+
+    public string GetValue(string text, ResourceManager resource, params object[] arguments) => resourceManager.GetValue(text, resource, arguments);
+
+    public void ReleaseAllResources() => resourceManager.ReleaseAllResources();
 }

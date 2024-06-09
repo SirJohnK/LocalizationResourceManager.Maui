@@ -1,4 +1,6 @@
-﻿namespace LocalizationResourceManager.Maui;
+﻿using LocalizationResourceManager.Maui.Helpers;
+
+namespace LocalizationResourceManager.Maui;
 
 /// <summary>
 /// MAUI App Builder Extension for library setup.
@@ -17,11 +19,13 @@ public static class AppHostBuilderExtensions
     public static MauiAppBuilder UseLocalizationResourceManager(this MauiAppBuilder builder, Action<ILocalizationSettings> settings)
     {
         //Setup Settings
-        LocalizationResourceManager.Current.Services = builder.Services;
-        settings.Invoke(LocalizationResourceManager.Current);
+        LocalizationResourceManager.Current resourceManager = new(builder.Services);
+        settings.Invoke(resourceManager);
+
+        builder.Services.BuildServiceProvider
 
         //Add Service
-        builder.Services.AddSingleton<ILocalizationResourceManager>(LocalizationResourceManager.Current);
+        builder.Services.AddSingleton<ILocalizationResourceManager>(resourceManager);
 
         //Return Builder
         return builder;
