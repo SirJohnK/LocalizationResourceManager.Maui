@@ -6,6 +6,9 @@ namespace LocalizationResourceManager.Maui;
 [ContentProperty(nameof(Path))]
 public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiValueConverter
 {
+    // Internal Properties
+    private ILocalizationResourceManager resourceManagerInstance = LocalizationResourceManager.Current;
+
     /// <inheritdoc/>
     public string Path { get; set; } = ".";
 
@@ -52,9 +55,20 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
 
     BindingBase IMarkupExtension<BindingBase>.ProvideValue(IServiceProvider serviceProvider)
     {
+        // Handle specific resource manager
         if (LocalizationResourceManager.Current.HasKeyedResources)
+        {
+            //Any specific resource manager specfiied?
             ResourceManager ??= (serviceProvider.GetService<IRootObjectProvider>()?.RootObject as ISpecificResourceManager)?.ResourceManager;
 
+            //Attempt to resolve specific resource manager
+            if (!string.IsNullOrWhiteSpace(ResourceManager))
+            {
+                resourceManagerInstance = LocalizationResourceManager.Current.GetResourceManager(ResourceManager) ?? LocalizationResourceManager.Current;
+            }
+        }
+
+        //Return translation binding
         return new MultiBinding()
         {
             StringFormat = StringFormat,
@@ -76,7 +90,6 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
 
         //Init
         string? text = null;
-        var resourceManager = LocalizationResourceManager.Current;
 
         //Get Translation Text
         if (!string.IsNullOrWhiteSpace(TranslateZero) && IsZero(value)) text = TranslateZero;
@@ -87,7 +100,7 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
         else if (TranslateValue) text = $"{value}";
 
         //Resolve Translation Text
-        if (text is not null) return ResourceManager is null ? resourceManager[text, value] : resourceManager[text, ResourceManager, value];
+        if (text is not null) return resourceManagerInstance.GetValue(text, value);
 
         //Return Value since translation was not found or resolved!
         return value;

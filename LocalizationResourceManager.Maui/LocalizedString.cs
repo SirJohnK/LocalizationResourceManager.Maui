@@ -9,18 +9,18 @@ public class LocalizedString : ObservableObject
 {
     private readonly Func<string> generator;
 
-    public LocalizedString(Func<string> generator)
-        : this(LocalizationResourceManager.Current, generator)
+    public LocalizedString(Func<string> generator) : this(LocalizationResourceManager.Current, generator)
     {
     }
 
-    public LocalizedString(LocalizationResourceManager localizationManager, Func<string> generator)
+    public LocalizedString(ILocalizationResourceManager resourceManager, Func<string> generator)
     {
+        //Store localized string generator
         this.generator = generator;
 
         // This instance will be unsubscribed and GCed if no one references it
         // since LocalizationResourceManager uses WeekEventManger
-        localizationManager.PropertyChanged += (sender, e) => OnPropertyChanged((string?)null);
+        resourceManager.PropertyChanged += (sender, e) => OnPropertyChanged((string?)null);
     }
 
     [Microsoft.Maui.Controls.Internals.Preserve(Conditional = true)]

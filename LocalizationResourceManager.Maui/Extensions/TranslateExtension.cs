@@ -1,4 +1,6 @@
-﻿namespace LocalizationResourceManager.Maui;
+﻿using System.Resources;
+
+namespace LocalizationResourceManager.Maui;
 
 /// <summary>
 /// Markup extension (XAML) for handling and updating localized string by tracking current culture from current localization resource manager.
@@ -22,37 +24,41 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
 
     public object? ConverterParameter { get; set; }
 
-    private string? resourceManager;
-
-    public string? ResourceManager
-    {
-        get => resourceManager;
-        set => resourceManager = value is not null ? $"rm://{value}/" : value;
-    }
+    public string? ResourceManager { get; set; }
 
     object IMarkupExtension.ProvideValue(IServiceProvider serviceProvider) => ProvideValue(serviceProvider);
 
+    [Microsoft.Maui.Controls.Internals.Preserve(Conditional = true)]
     public BindingBase ProvideValue(IServiceProvider serviceProvider)
     {
-        #region Required work-around to prevent linker from removing the implementation
+        //Init
+        ILocalizationResourceManager resourceManagerInstance = LocalizationResourceManager.Current;
 
-        if (DateTime.Now.Ticks < 0)
-            _ = LocalizationResourceManager.Current[Text];
-
-        #endregion Required work-around to prevent linker from removing the implementation
-
+        // Handle specific resource manager
         if (LocalizationResourceManager.Current.HasKeyedResources)
+        {
+            //Any specific resource manager specfiied?
             ResourceManager ??= (serviceProvider.GetService<IRootObjectProvider>()?.RootObject as ISpecificResourceManager)?.ResourceManager;
 
+            //Attempt to resolve specific resource manager
+            if (!string.IsNullOrWhiteSpace(ResourceManager))
+            {
+                resourceManagerInstance = LocalizationResourceManager.Current.GetResourceManager(ResourceManager) ?? LocalizationResourceManager.Current;
+            }
+        }
+
+        //Setup binding
         var binding = new Binding
         {
             Mode = BindingMode.OneWay,
-            Path = $"[{resourceManager}{Text}]",
-            Source = LocalizationResourceManager.Current,
+            Path = $"[{Text}]",
+            Source = resourceManagerInstance,
             StringFormat = StringFormat,
             Converter = Converter,
             ConverterParameter = ConverterParameter
         };
+
+        //Return translation binding
         return binding;
     }
 }

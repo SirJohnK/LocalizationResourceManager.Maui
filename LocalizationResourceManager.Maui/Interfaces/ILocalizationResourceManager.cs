@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel;
+using System.Globalization;
 using System.Resources;
 
 namespace LocalizationResourceManager.Maui
@@ -6,7 +7,7 @@ namespace LocalizationResourceManager.Maui
     /// <summary>
     /// Interface for Localization Resource Manager
     /// </summary>
-    public interface ILocalizationResourceManager
+    public interface ILocalizationResourceManager : INotifyPropertyChanged
     {
         /// <summary>
         /// Get Default / System culture.

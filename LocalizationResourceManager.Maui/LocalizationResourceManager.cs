@@ -1,5 +1,4 @@
 ﻿using LocalizationResourceManager.Maui.ComponentModel;
-using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Resources;
@@ -16,7 +15,7 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
     internal static LocalizationResourceManager Current => currentHolder.Value;
 
     private List<ResourceManager> resources = [];
-    private Dictionary<string, ResourceManager> keyedResources = [];
+    private Dictionary<string, SpecificLocalizationResourceManager> keyedResources = [];
 
     internal bool IsNameWithDotsSupported { get; private set; } = false;
 
@@ -71,8 +70,9 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         {
             if (AddResource(resource))
             {
-                keyedResources.Add(resourceKey, resource);
-                Services?.AddKeyedSingleton<ILocalizationResourceManager>(resourceKey, new SpecificLocalizationResourceManager(resourceKey));
+                var resourceManager = new SpecificLocalizationResourceManager(resource);
+                keyedResources.Add(resourceKey, resourceManager);
+                Services?.AddKeyedSingleton<ILocalizationResourceManager>(resourceKey, resourceManager);
                 HasKeyedResources = true;
                 return true;
             }
@@ -131,8 +131,9 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         {
             if (AddFileResource(baseName, resourceDir, usingResourceSet))
             {
-                keyedResources.Add(baseName, resources.Last());
-                Services?.AddKeyedSingleton<ILocalizationResourceManager>(resourceKey, new SpecificLocalizationResourceManager(resourceKey));
+                var resourceManager = new SpecificLocalizationResourceManager(resources.Last());
+                keyedResources.Add(resourceKey, resourceManager);
+                Services?.AddKeyedSingleton<ILocalizationResourceManager>(resourceKey, resourceManager);
                 HasKeyedResources = true;
                 return true;
             }
@@ -204,6 +205,26 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
 
     #endregion ILocalizationSettings
 
+    #region Internal Value Handling
+
+    internal string GetValue(string text, ResourceManager? resource)
+    {
+        //If supported, handle names with dots!
+        text = IsNameWithDotsSupported ? text.Replace(DotSubstitution, ".") : text;
+
+        //Attemp to get localized string with Current Culture
+        var value = resource?.GetString(text, CurrentCulture) ?? ((resources?.Count ?? 0) > 0 ? GetValue(text) : null);
+
+        //Return Result
+        return value ?? (suppressTextNotFoundException ? (usePlaceholder ? string.Format(placeholderText, text) : string.Empty) : throw new NullReferenceException($"{nameof(text)}: '{$"{resource?.BaseName}/{text}"}' not found!"));
+    }
+
+    internal string GetValue(string text, ResourceManager resource, params object[] arguments) => string.Format(GetValue(text, resource), arguments);
+
+    internal ILocalizationResourceManager? GetResourceManager(string resourceManager) => keyedResources.GetValueOrDefault(resourceManager);
+
+    #endregion Internal Value Handling
+
     #region ILocalizationResourceManager
 
     /// <summary>
@@ -220,23 +241,11 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         if ((resources?.Count ?? 0) == 0)
             throw new InvalidOperationException($"At least one resource must be added with Settings.{nameof(AddResource)}!");
 
-        //Init
-        string? value = null;
+        //If supported, handle names with dots!
+        text = IsNameWithDotsSupported ? text.Replace(DotSubstitution, ".") : text;
 
-        //Check if ResourceManager is specified
-        if (text.StartsWith("rm://"))
-        {
-            var textValues = text[5..].Split("/");
-            value = GetValue(textValues[1], textValues[0]);
-        }
-        else
-        {
-            //If supported, handle names with dots!
-            text = IsNameWithDotsSupported ? text.Replace(DotSubstitution, ".") : text;
-
-            //Attemp to get localized string with Current Culture
-            value = resources?.Select(resource => resource.GetString(text, CurrentCulture)).FirstOrDefault(output => output is not null);
-        }
+        //Attemp to get localized string with Current Culture
+        var value = resources?.Select(resource => resource.GetString(text, CurrentCulture)).FirstOrDefault(output => output is not null);
 
         //Return Result
         return value ?? (suppressTextNotFoundException ? (usePlaceholder ? string.Format(placeholderText, text) : string.Empty) : throw new NullReferenceException($"{nameof(text)}: '{text}' not found!"));
@@ -245,19 +254,10 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
     public string GetValue(string text, string resourceManager)
     {
         //Init
-        string? value = null;
-
-        if (keyedResources?.TryGetValue(resourceManager, out var resource) ?? false)
-        {
-            //If supported, handle names with dots!
-            text = IsNameWithDotsSupported ? text.Replace(DotSubstitution, ".") : text;
-
-            //Attemp to get localized string with Current Culture
-            value = resource.GetString(text, CurrentCulture);
-        }
+        var keyedResource = keyedResources.GetValueOrDefault(resourceManager);
 
         //Return Result
-        return value ?? (suppressTextNotFoundException ? (usePlaceholder ? string.Format(placeholderText, $"{resourceManager}/{text}") : string.Empty) : throw new NullReferenceException($"{nameof(text)}: '{$"{resourceManager}/{text}"}' not found!"));
+        return GetValue(text, keyedResource?.Resource);
     }
 
     /// <summary>
