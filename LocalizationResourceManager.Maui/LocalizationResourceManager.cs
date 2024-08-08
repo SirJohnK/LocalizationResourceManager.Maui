@@ -47,9 +47,7 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
     public bool AddResource(ResourceManager resource)
     {
         try
-        {
-            //Verify access by attempting to get empty string
-            resource.GetString(string.Empty);
+        {           
 
             //Access attempt was successful!
             resources.Add(resource);
