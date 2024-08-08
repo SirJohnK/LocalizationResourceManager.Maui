@@ -29,8 +29,11 @@
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 		<AssemblyVersion>1.3.0.0</AssemblyVersion>
 		<FileVersion>1.3.0.0</FileVersion>
-		<PackageReleaseNotes>- Add option to add and select a specific ResourceManager.</PackageReleaseNotes>
-		<Version>1.3.0-alpha.2</Version>
+		<PackageReleaseNotes>- Add option to add and select a specific ResourceManager.
+- Add source generator for the ISpecificResourceManager implementation.
+- Add converter support to TranslateExtension.
+- Upgrade to .NET 8.</PackageReleaseNotes>
+		<Version>1.3.0-alpha.3</Version>
 	</PropertyGroup>
 
   <ItemGroup>

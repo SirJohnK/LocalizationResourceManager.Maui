@@ -58,8 +58,8 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
         // Handle specific resource manager
         if (LocalizationResourceManager.Current.HasKeyedResources)
         {
-            //Any specific resource manager specfiied?
-            ResourceManager ??= (serviceProvider.GetService<IRootObjectProvider>()?.RootObject as ISpecificResourceManager)?.ResourceManager;
+            //Any specific resource manager specified?
+            ResourceManager ??= (serviceProvider.GetService<IProvideValueTarget>()?.GetRootObject() as ISpecificResourceManager)?.ResourceManager;
 
             //Attempt to resolve specific resource manager
             if (!string.IsNullOrWhiteSpace(ResourceManager))
