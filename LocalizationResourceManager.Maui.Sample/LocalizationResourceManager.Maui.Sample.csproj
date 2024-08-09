@@ -19,6 +19,7 @@
 		<ApplicationIdGuid>73206c16-0bbf-4382-a442-f90b21cbca3c</ApplicationIdGuid>
 
 		<!-- Versions -->
+    <Version>1.3.0</Version>
 		<ApplicationDisplayVersion>1.3.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 

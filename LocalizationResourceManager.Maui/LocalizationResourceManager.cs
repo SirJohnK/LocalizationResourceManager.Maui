@@ -46,10 +46,15 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
     /// <returns>Flag indication if ResourceManager was added successfully</returns>
     public bool AddResource(ResourceManager resource)
     {
-        try
-        {           
+        //Verify parameters
+        ArgumentNullException.ThrowIfNull(resource);
 
-            //Access attempt was successful!
+        try
+        {
+            //Verify if ResourceManager is already added!
+            if (resources.Contains(resource)) return false;
+
+            //Attempt to add ResourceManager
             resources.Add(resource);
 
             //Return successful status
@@ -94,8 +99,8 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
     public bool AddFileResource(string baseName, string resourceDir, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors)] Type? usingResourceSet = null)
     {
         //Verify parameters
-        if (string.IsNullOrWhiteSpace(baseName)) throw new ArgumentNullException(nameof(baseName));
-        if (string.IsNullOrWhiteSpace(resourceDir)) throw new ArgumentNullException(nameof(resourceDir));
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(baseName);
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(resourceDir);
 
         try
         {
