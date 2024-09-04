@@ -7,7 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalizationResourceManager
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalizationResourceManager.Maui.Sample", "LocalizationResourceManager.Maui.Sample\LocalizationResourceManager.Maui.Sample.csproj", "{C1D6380B-8D7B-4353-A1A0-3F37FE1A195A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalizationResourceManager.Maui.SourceGenerators", "LocalizationResourceManager.Maui.SourceGenerators\LocalizationResourceManager.Maui.SourceGenerators.csproj", "{7934B70C-AEAA-483A-82F3-527B00D29713}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalizationResourceManager.Maui.SourceGenerators", "LocalizationResourceManager.Maui.SourceGenerators\LocalizationResourceManager.Maui.SourceGenerators.csproj", "{7934B70C-AEAA-483A-82F3-527B00D29713}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalizationResourceManager.Maui.Tests", "LocalizationResourceManager.Maui.Tests\LocalizationResourceManager.Maui.Tests.csproj", "{02383A0D-6236-46E5-920F-E707B9C46A91}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalizationResourceManager.Maui.Core", "LocalizationResourceManager.Maui.Core\LocalizationResourceManager.Maui.Core.csproj", "{1C7DAEC0-A355-49B5-B8F8-FCCDC1B0C7D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalizationResourceManager.Maui.Sample.Common", "LocalizationResourceManager.Maui.Sample.Common\LocalizationResourceManager.Maui.Sample.Common.csproj", "{8CAB85E1-D62D-4C89-B629-2B59099DDEF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +35,18 @@ Global
 		{7934B70C-AEAA-483A-82F3-527B00D29713}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7934B70C-AEAA-483A-82F3-527B00D29713}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7934B70C-AEAA-483A-82F3-527B00D29713}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02383A0D-6236-46E5-920F-E707B9C46A91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02383A0D-6236-46E5-920F-E707B9C46A91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02383A0D-6236-46E5-920F-E707B9C46A91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02383A0D-6236-46E5-920F-E707B9C46A91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C7DAEC0-A355-49B5-B8F8-FCCDC1B0C7D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C7DAEC0-A355-49B5-B8F8-FCCDC1B0C7D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C7DAEC0-A355-49B5-B8F8-FCCDC1B0C7D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C7DAEC0-A355-49B5-B8F8-FCCDC1B0C7D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CAB85E1-D62D-4C89-B629-2B59099DDEF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CAB85E1-D62D-4C89-B629-2B59099DDEF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CAB85E1-D62D-4C89-B629-2B59099DDEF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CAB85E1-D62D-4C89-B629-2B59099DDEF2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

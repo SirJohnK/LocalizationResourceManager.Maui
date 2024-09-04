@@ -32,7 +32,7 @@
 
             <Button
                 x:Name="CounterBtn"
-                Clicked="OnCounterClicked"
+                Command="{Binding CounterClickedCommand}"
                 HorizontalOptions="Center"
                 SemanticProperties.Hint="{localization:Translate CounterBtnHint}"
                 Text="{localization:TranslateBinding Count,

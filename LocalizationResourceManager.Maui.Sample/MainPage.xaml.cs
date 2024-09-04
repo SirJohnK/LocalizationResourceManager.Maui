@@ -1,37 +1,19 @@
-﻿using System.Globalization;
+﻿using LocalizationResourceManager.Maui.Sample.Common;
+using System.Globalization;
 
 namespace LocalizationResourceManager.Maui.Sample
 {
     public partial class MainPage : ContentPage
     {
-        private int count = 0;
         private readonly ILocalizationResourceManager resourceManager;
 
-        public int Count
+        public MainPage(ILocalizationResourceManager resourceManager, MainViewModel viewModel)
         {
-            get => count;
-            set
-            {
-                count = value;
-                OnPropertyChanged(nameof(Count));
-            }
-        }
-
-        public LocalizedString HelloWorld { get; }
-        public LocalizedString CurrentCulture { get; }
-
-        public MainPage(ILocalizationResourceManager resourceManager)
-        {
+            //Init
             InitializeComponent();
             this.resourceManager = resourceManager;
-
-            HelloWorld = new(() => $"{resourceManager["Hello"]}, {resourceManager["World"]}!");
-            CurrentCulture = new(() => resourceManager.CurrentCulture.NativeName);
-
-            BindingContext = this;
+            BindingContext = viewModel;
         }
-
-        private void OnCounterClicked(object sender, EventArgs e) => Count++;
 
         private void OnToggleLanguage(object sender, EventArgs e)
         {

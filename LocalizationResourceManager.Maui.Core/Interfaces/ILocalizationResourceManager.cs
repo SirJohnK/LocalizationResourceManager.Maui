@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
-using System.Resources;
 
 namespace LocalizationResourceManager.Maui
 {

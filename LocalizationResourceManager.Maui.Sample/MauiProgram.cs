@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using LocalizationResourceManager.Maui.Sample.Resources;
+using LocalizationResourceManager.Maui.Sample.Common;
 
 namespace LocalizationResourceManager.Maui.Sample
 {
@@ -26,6 +27,9 @@ namespace LocalizationResourceManager.Maui.Sample
             //Add Views
             builder.Services.AddTransient<MainPage>();
             builder.Services.AddTransient<SpecificPage>();
+
+            //Add ViewModels
+            builder.Services.AddTransient<MainViewModel>();
 
 #if DEBUG
             builder.Logging.AddDebug();

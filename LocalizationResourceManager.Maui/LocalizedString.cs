@@ -1,30 +1,15 @@
-﻿using LocalizationResourceManager.Maui.ComponentModel;
+﻿using CoreLocalizedString = LocalizationResourceManager.Maui.Core.LocalizedString;
 
 namespace LocalizationResourceManager.Maui;
 
 /// <summary>
 /// Localized string, updated by tracking current culture from current localizarion resource manager.
 /// </summary>
-public class LocalizedString : ObservableObject
+public class LocalizedString : CoreLocalizedString
 {
-    private readonly Func<string> generator;
-
-    public LocalizedString(Func<string> generator) : this(LocalizationResourceManager.Current, generator)
+    public LocalizedString(Func<string> generator) : base(LocalizationResourceManager.Current, generator)
     {
     }
-
-    public LocalizedString(ILocalizationResourceManager resourceManager, Func<string> generator)
-    {
-        //Store localized string generator
-        this.generator = generator;
-
-        // This instance will be unsubscribed and GCed if no one references it
-        // since LocalizationResourceManager uses WeekEventManger
-        resourceManager.PropertyChanged += (sender, e) => OnPropertyChanged((string?)null);
-    }
-
-    [Microsoft.Maui.Controls.Internals.Preserve(Conditional = true)]
-    public string Localized => generator();
 
     [Microsoft.Maui.Controls.Internals.Preserve(Conditional = true)]
     public static implicit operator LocalizedString(Func<string> func) => new(func);

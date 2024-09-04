@@ -1,7 +1,10 @@
-﻿using LocalizationResourceManager.Maui.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Resources;
 using System.Globalization;
-using System.Resources;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using LocalizationResourceManager.Maui.ComponentModel;
+
+[assembly: InternalsVisibleTo("LocalizationResourceManager.Maui.Tests")]
 
 namespace LocalizationResourceManager.Maui;
 

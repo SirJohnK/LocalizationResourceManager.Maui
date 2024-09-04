@@ -58,7 +58,8 @@
   </ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\LocalizationResourceManager.Maui.SourceGenerators\LocalizationResourceManager.Maui.SourceGenerators.csproj" ReferenceOutputAssembly="true" OutputItemType="Analyzer" />
+    <ProjectReference Include="..\LocalizationResourceManager.Maui.SourceGenerators\LocalizationResourceManager.Maui.SourceGenerators.csproj" ReferenceOutputAssembly="true" OutputItemType="Analyzer" />
+    <ProjectReference Include="..\LocalizationResourceManager.Maui.Sample.Common\LocalizationResourceManager.Maui.Sample.Common.csproj" />
 	  <ProjectReference Include="..\LocalizationResourceManager.Maui\LocalizationResourceManager.Maui.csproj" />
 	</ItemGroup>
 

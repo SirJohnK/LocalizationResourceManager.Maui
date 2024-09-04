@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>LocalizationResourceManager.Maui.Core</Title>
+    <Authors>Johan Svensson</Authors>
+    <Description>Core functionality for the LocalizationResourceManager.Maui library.</Description>
+    <Copyright>© 2024 Johan Svensson All Rights Reserved</Copyright>
+    <PackageProjectUrl>https://github.com/SirJohnK/LocalizationResourceManager.Maui</PackageProjectUrl>
+    <PackageIcon>sirjohnk.png</PackageIcon>
+    <RepositoryUrl>https://github.com/SirJohnK/LocalizationResourceManager.Maui</RepositoryUrl>
+    <PackageTags>dotnet,dotnetmaui,localization</PackageTags>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <PackageReleaseNotes>- Extract core functionality from the LocalizationResourceManager.Maui library.</PackageReleaseNotes>
+    <Version>1.0.0-alpha.1</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE.txt" Link="LICENSE.txt">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
+    </None>
+    <None Include="..\sirjohnk.png" Link="sirjohnk.png">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
+    </None>
+  </ItemGroup>
+
+</Project>
