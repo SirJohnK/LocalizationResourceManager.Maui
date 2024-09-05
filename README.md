@@ -6,7 +6,7 @@ Enhanced .NET MAUI version of the Xamarin Community Toolkit LocalizationResource
 
 |Name|Info|
 | ------------------- | :------------------: |
-|LocalizationResourceManager.Maui|![NuGet](https://img.shields.io/nuget/vpre/LocalizationResourceManager.Maui)|
+|LocalizationResourceManager.Maui|[![NuGet](https://img.shields.io/nuget/vpre/LocalizationResourceManager.Maui)](https://www.nuget.org/packages/LocalizationResourceManager.Maui/)|
 
 ## Background
 
