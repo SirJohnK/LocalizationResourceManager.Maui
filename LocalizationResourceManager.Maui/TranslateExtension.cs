@@ -12,7 +12,7 @@ namespace LocalizationResourceManager.Maui;
 /// <Button x:Name="CounterBtnMany" Text="{localization:Translate ClickedManyTimes, X0={Binding Count}}" />
 /// </example>
 [ContentProperty(nameof(Text))]
-public class TranslateExtension : BindableObject, IMarkupExtension<BindingBase>
+public class TranslateExtension : IMarkupExtension<BindingBase>
 {
     /// <summary>
     /// A localize string or a binding to a localize string.
@@ -103,7 +103,7 @@ public class TranslateExtension : BindableObject, IMarkupExtension<BindingBase>
     /// <param name="text">A localize string resource or a binding to a localize string resource</param>
     /// <param name="arguments">An array of arguments or binding to arguments</param>
     /// <returns></returns>
-    public BindingBase NewBinding(object text, params object?[] arguments)
+    public BindingBase NewBinding(object? text, params object?[] arguments)
     {
         Collection<BindingBase> bindings = new Collection<BindingBase>
         {
