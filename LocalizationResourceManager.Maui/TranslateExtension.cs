@@ -17,12 +17,7 @@ public class TranslateExtension : BindableObject, IMarkupExtension<BindingBase>
     /// <summary>
     /// A localize string or a binding to a localize string.
     /// </summary>
-    public static readonly BindableProperty TextProperty = BindableProperty.Create("Text", typeof(object), typeof(TranslateExtension), string.Empty);
-    public object Text
-    {
-        get => GetValue(TextProperty);
-        set => SetValue(TextProperty, value);
-    }
+    public object? Text { get; set; } = null;
 
     /// <summary>
     /// Value or binding that will be used as argument {0} in the localized string
