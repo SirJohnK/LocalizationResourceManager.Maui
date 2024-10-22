@@ -12,6 +12,17 @@
             Spacing="15"
             VerticalOptions="Center">
 
+            <VerticalStackLayout BindingContext="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}}">
+                <CollectionView ItemsSource="{Binding MyStrings}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Label Text="{localization:Translate {Binding Localization}}" />
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <Picker  ItemsSource="{Binding MyStrings}" />
+            </VerticalStackLayout>
+
             <Image
                 HeightRequest="200"
                 HorizontalOptions="Center"

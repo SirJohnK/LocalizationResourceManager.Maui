@@ -83,6 +83,11 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
     /// <returns>A binding to a localized string resource.</returns>
     public BindingBase ProvideValue(IServiceProvider serviceProvider)
     {
+        #region Required work-around to prevent linker from removing the implementation
+        if (DateTime.Now.Ticks < 0 && Text is string text)
+            _ = LocalizationResourceManager.Current[text];
+        #endregion Required work-around to prevent linker from removing the implementation
+
         object?[] values = { X0, X1, X2, X3, X4, X5, X6, X7, X8, X9 };
         int maxIndex = -1;
         for (int i = 0; i < values.Length; i++)
