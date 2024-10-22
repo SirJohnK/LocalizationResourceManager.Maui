@@ -3,15 +3,10 @@ using System.Globalization;
 
 namespace LocalizationResourceManager.Maui.Sample
 {
-    public record class Option
-    {
-        public string Localization { get; set; } = string.Empty;
-    }
     public partial class MainPage : ContentPage
     {
         private int count = 0;
         private readonly ILocalizationResourceManager resourceManager;
-        public List<Option> MyStrings { get; } = new () { new Option { Localization = "ClickMe" }, new Option { Localization = "ClickedOneTime" }, new Option { Localization = "ClickedManyTimes" } };
 
         public LocalizedString HelloWorld { get; }
         public LocalizedString CurrentCulture { get; }
