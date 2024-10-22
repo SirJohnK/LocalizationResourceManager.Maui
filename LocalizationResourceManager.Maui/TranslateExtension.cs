@@ -20,6 +20,11 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
     public object? Text { get; set; } = null;
 
     /// <summary>
+    /// A string format to apply to the text string.
+    /// </summary>
+    public string? StringFormat { get; set; }
+
+    /// <summary>
     /// Value or binding that will be used as argument {0} in the localized string
     /// </summary>
     public object? X0 { get; set; } = null;
@@ -105,6 +110,23 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
     /// <returns></returns>
     public BindingBase NewBinding(object? text, params object?[] arguments)
     {
+        if (text is string value && arguments.Length == 0)
+        {
+            if (LocalizationResourceManager.Current.IsNameWithDotsSupported)
+            {
+                value = value.Replace(".", LocalizationResourceManager.Current.DotSubstitution);
+            }
+
+            var binding = new Binding
+            {
+                Mode = BindingMode.OneWay,
+                Path = $"[{value}]",
+                Source = LocalizationResourceManager.Current,
+                StringFormat = StringFormat
+            };
+            return binding;
+        }
+
         Collection<BindingBase> bindings = new Collection<BindingBase>
         {
             (text is BindingBase textBinding) ? textBinding : new Binding(".", source: text)
@@ -112,14 +134,16 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
 
         bindings.Add(new Binding("CurrentCulture", BindingMode.OneWay, null, null, null, LocalizationResourceManager.Current));
 
-        foreach (var value in arguments)
+        foreach (var arg in arguments)
         {
-            bindings.Add((value is BindingBase binding) ? binding : new Binding(".", source: value));
+            bindings.Add((arg is BindingBase binding) ? binding : new Binding(".", source: arg));
         }
 
         return new MultiBinding()
         {
+            Mode = BindingMode.OneWay,
             Bindings = bindings,
+            StringFormat = StringFormat,
             Converter = new TranslateExtensionConverter()
         };
     }
