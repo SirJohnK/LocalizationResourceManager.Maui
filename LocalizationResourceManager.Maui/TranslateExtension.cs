@@ -89,15 +89,7 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
         #endregion Required work-around to prevent linker from removing the implementation
 
         object?[] values = { X0, X1, X2, X3, X4, X5, X6, X7, X8, X9 };
-        int maxIndex = -1;
-        for (int i = 0; i < values.Length; i++)
-        {
-            if (values[i] is not null)
-            {
-                maxIndex = i;
-            }
-        }
-
+        int maxIndex = values.Select(v => v is not null).ToList<bool>().LastIndexOf(true);
         return NewBinding(Text, StringFormat, values.Take(maxIndex + 1).ToArray());
     }
 
