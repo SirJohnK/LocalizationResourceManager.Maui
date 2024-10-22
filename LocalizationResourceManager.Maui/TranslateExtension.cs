@@ -93,7 +93,7 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
             }
         }
 
-        return NewBinding(Text, values.Take(maxIndex + 1).ToArray());
+        return NewBinding(Text, StringFormat, values.Take(maxIndex + 1).ToArray());
     }
 
     /// <summary>
@@ -108,7 +108,7 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
     /// <param name="text">A localize string resource or a binding to a localize string resource</param>
     /// <param name="arguments">An array of arguments or binding to arguments</param>
     /// <returns></returns>
-    public BindingBase NewBinding(object? text, params object?[] arguments)
+    public static BindingBase NewBinding(object? text, string? stringFormat, params object?[] arguments)
     {
         if (text is string value && arguments.Length == 0)
         {
@@ -122,7 +122,7 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
                 Mode = BindingMode.OneWay,
                 Path = $"[{value}]",
                 Source = LocalizationResourceManager.Current,
-                StringFormat = StringFormat
+                StringFormat = stringFormat
             };
             return binding;
         }
@@ -143,11 +143,10 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
         {
             Mode = BindingMode.OneWay,
             Bindings = bindings,
-            StringFormat = StringFormat,
+            StringFormat = stringFormat,
             Converter = new TranslateExtensionConverter()
         };
     }
-
 
     internal sealed class TranslateExtensionConverter : IMultiValueConverter
     {

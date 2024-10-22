@@ -23,6 +23,6 @@ public static class TranslateExtensionMethod
     /// // count as a binding
     /// CounterBtn.SetTranslate(Button.TextProperty, "ClickedManyTimes", new Binding(nameof(Count), source: this));
     /// </example>
-    public static void SetTranslate(this BindableObject bindable, BindableProperty targetProperty, object text, params object[] args)
-        => bindable.SetBinding(targetProperty, new TranslateExtension().NewBinding(text, args));
+    public static void SetTranslate(this BindableObject bindable, BindableProperty targetProperty, object? text, params object?[] args)
+        => bindable.SetBinding(targetProperty, TranslateExtension.NewBinding(text, null, args));
 }
