@@ -98,14 +98,15 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
     /// Used by SetTranslate extension method.
     /// </summary>
     /// <example>
-    /// CounterBtn.SetBinding(Button.TextProperty, new TranslateExtension().NewBinding("ClickMe"));
-    /// CounterBtnOne.SetBinding(Button.TextProperty, new TranslateExtension().NewBinding("ClickedOneTime", count));
-    /// CounterBtnMany.SetBinding(Button.TextProperty, new TranslateExtension().NewBinding("ClickedManyTimes", count));
+    /// CounterBtn.SetBinding(Button.TextProperty, TranslateExtension.NewBinding("ClickMe"));
+    /// CounterBtnOne.SetBinding(Button.TextProperty, TranslateExtension.NewBinding("ClickedOneTime", null, count));
+    /// CounterBtnMany.SetBinding(Button.TextProperty, TranslateExtension.NewBinding("ClickedManyTimes", null, count));
     /// </example>
     /// <param name="text">A localize string resource or a binding to a localize string resource</param>
+    /// <param name="stringFormat">A string format to apply to the text string</param>
     /// <param name="arguments">An array of arguments or binding to arguments</param>
     /// <returns></returns>
-    public static BindingBase NewBinding(object? text, string? stringFormat, params object?[] arguments)
+    public static BindingBase NewBinding(object? text, string? stringFormat = null, params object?[] arguments)
     {
         if (text is string value && arguments.Length == 0)
         {
