@@ -13,14 +13,14 @@ public static class TranslateExtensionMethod
     /// <param name="text">A localized string or a binding to a localize string</param>
     /// <param name="args">A collection of arguments or a binding to arguments</param>
     /// <example>
-    /// // count as constant arguments
+    /// // count as a scalar constant
     /// if (count == 0)
     ///     CounterBtn.SetTranslate(Button.TextProperty, "ClickMe");
     /// else if (count == 1)
     ///     CounterBtn.SetTranslate(Button.TextProperty, "ClickedOneTime", count);
     /// else
     ///     CounterBtn.SetTranslate(Button.TextProperty, "ClickedManyTimes", count);
-    /// // count as a binding
+    /// // count passed as a binding
     /// CounterBtn.SetTranslate(Button.TextProperty, "ClickedManyTimes", new Binding(nameof(Count), source: this));
     /// </example>
     public static void SetTranslate(this BindableObject bindable, BindableProperty targetProperty, object? text, params object?[] args)
