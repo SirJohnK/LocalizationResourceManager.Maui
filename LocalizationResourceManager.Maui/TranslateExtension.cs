@@ -17,7 +17,7 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
     /// <summary>
     /// A localize string or a binding to a localize string.
     /// </summary>
-    public object? Text { get; set; } = null;
+    public object? Text { get; set; } = string.Empty;
 
     /// <summary>
     /// A string format to apply to the text string.
@@ -88,9 +88,12 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
             _ = LocalizationResourceManager.Current[text];
         #endregion Required work-around to prevent linker from removing the implementation
 
-        object?[] values = { X0, X1, X2, X3, X4, X5, X6, X7, X8, X9 };
-        int maxIndex = values.Select(v => v is not null).ToList<bool>().LastIndexOf(true);
-        return NewBinding(Text, StringFormat, values.Take(maxIndex + 1).ToArray());
+        List<object?> values = new List<object?>() { X0, X1, X2, X3, X4, X5, X6, X7, X8, X9 };
+        while (values.Count > 0 && values[values.Count - 1] is null)
+        {
+            values.RemoveAt(values.Count - 1);
+        }
+        return NewBinding(Text, StringFormat, values.ToArray());
     }
 
     /// <summary>
