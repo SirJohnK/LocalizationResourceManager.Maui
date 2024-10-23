@@ -130,10 +130,9 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
 
         Collection<BindingBase> bindings = new Collection<BindingBase>
         {
-            (text is BindingBase textBinding) ? textBinding : new Binding(".", source: text)
+            (text is BindingBase textBinding) ? textBinding : new Binding(".", source: text),
+            new Binding("CurrentCulture", source: LocalizationResourceManager.Current)
         };
-
-        bindings.Add(new Binding("CurrentCulture", BindingMode.OneWay, null, null, null, LocalizationResourceManager.Current));
 
         foreach (var arg in arguments)
         {
