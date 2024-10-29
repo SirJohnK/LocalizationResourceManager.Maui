@@ -1,8 +1,8 @@
 ﻿using System.Resources;
 using System.Globalization;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using LocalizationResourceManager.Maui.ComponentModel;
+using LocalizationResourceManager.Maui.Helpers;
 
 [assembly: InternalsVisibleTo("LocalizationResourceManager.Maui.Tests")]
 
@@ -15,18 +15,9 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
 {
     private static readonly Lazy<LocalizationResourceManager> currentHolder = new(() => new LocalizationResourceManager());
 
-    internal static LocalizationResourceManager Current => currentHolder.Value;
-
     private List<ResourceManager> resources = [];
-    private Dictionary<string, SpecificLocalizationResourceManager> keyedResources = [];
 
-    internal bool IsNameWithDotsSupported { get; private set; } = false;
-
-    internal string DotSubstitution { get; private set; } = "_";
-
-    internal bool HasKeyedResources { get; private set; } = false;
-
-    internal IServiceCollection? Services { get; set; }
+    private IMicroContainer container = new MicroContainer();
 
     private bool suppressTextNotFoundException = false;
 
@@ -34,9 +25,25 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
 
     private string placeholderText = "{0}";
 
+    private IPreferences? preferences;
+    private IPreferences? Preferences => preferences ??= container.Get<IPreferences>();
+
+    internal static LocalizationResourceManager Current => currentHolder.Value;
+
+    internal Dictionary<string, SpecificLocalizationResourceManager> KeyedResources = [];
+
+    internal bool IsNameWithDotsSupported { get; private set; } = false;
+
+    internal string DotSubstitution { get; private set; } = "_";
+
+    internal bool HasKeyedResources { get; private set; } = false;
+
+    /// <summary>
+    /// Private Localization Resource Manager Constructor, to ensure singleton
+    /// </summary>
     private LocalizationResourceManager()
     {
-        //Init
+        //Store Default/Current System Culture
         DefaultCulture = CultureInfo.CurrentCulture;
     }
 
@@ -70,18 +77,18 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         }
     }
 
+    /// <summary>
+    /// Register ResourceManager with a specific key.
+    /// </summary>
+    /// <param name="resource">The ResourceManager to add</param>
+    /// <param name="resourceKey">Key to identify the ResourceManager</param>
+    /// <returns>Flag indication if ResourceManager was added successfully</returns>
     public bool AddResource(ResourceManager resource, string resourceKey)
     {
         try
         {
-            if (AddResource(resource))
-            {
-                var resourceManager = new SpecificLocalizationResourceManager(resource);
-                keyedResources.Add(resourceKey, resourceManager);
-                Services?.AddKeyedSingleton<ILocalizationResourceManager>(resourceKey, resourceManager);
-                HasKeyedResources = true;
-                return true;
-            }
+            if (AddResource(resource) && KeyedResources.TryAdd(resourceKey, new(resource)))
+                return HasKeyedResources = true;
             else
                 return false;
         }
@@ -92,14 +99,15 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
     }
 
     /// <summary>
-    /// Register file based ResourceManager and create default .resources file, if missing.
+    /// Try to register file based ResourceManager and create default .resources file, if missing.
     /// </summary>
     /// <param name="baseName">The root name of the resource.</param>
     /// <param name="resourceDir">Path to resource directory.</param>
+    /// <param name="resourceManager">Created ResourceManager</param>
     /// <param name="usingResourceSet">Optional, Type of the ResourceSet the ResourceManager uses to construct ResourceSets.</param>
     /// <returns>Flag indication if ResourceManager was added successfully</returns>
     /// <exception cref="ArgumentNullException">If baseName or resourceDir is null, empty or whitespace.</exception>
-    public bool AddFileResource(string baseName, string resourceDir, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors)] Type? usingResourceSet = null)
+    private bool TryAddFileResource(string baseName, string resourceDir, out ResourceManager? resourceManager, Type? usingResourceSet = null)
     {
         //Verify parameters
         ArgumentNullException.ThrowIfNullOrWhiteSpace(baseName);
@@ -122,27 +130,46 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
             }
 
             //Create and register file based ResourceManager
-            return AddResource(ResourceManager.CreateFileBasedResourceManager(baseName, resourceDir, usingResourceSet));
+            resourceManager = ResourceManager.CreateFileBasedResourceManager(baseName, resourceDir, usingResourceSet);
+            return AddResource(resourceManager);
         }
         catch (Exception)
         {
             //Registration of file resource failed!
+            resourceManager = null;
             return false;
         }
     }
 
-    public bool AddFileResource(string baseName, string resourceDir, string resourceKey, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors)] Type? usingResourceSet = null)
+    /// <summary>
+    /// Register file based ResourceManager and create default .resources file, if missing.
+    /// </summary>
+    /// <param name="baseName">The root name of the resource.</param>
+    /// <param name="resourceDir">Path to resource directory.</param>
+    /// <param name="usingResourceSet">Optional, Type of the ResourceSet the ResourceManager uses to construct ResourceSets.</param>
+    /// <returns>Flag indication if ResourceManager was added successfully</returns>
+    /// <exception cref="ArgumentNullException">If baseName or resourceDir is null, empty or whitespace.</exception>
+    public bool AddFileResource(string baseName, string resourceDir, Type? usingResourceSet = null)
+    {
+        //Try to add file based ResourceManager
+        return TryAddFileResource(baseName, resourceDir, out _, usingResourceSet);
+    }
+
+    /// <summary>
+    /// Register file based ResourceManager with a specific key and create default .resources file, if missing.
+    /// </summary>
+    /// <param name="baseName">The root name of the resource.</param>
+    /// <param name="resourceDir">Path to resource directory.</param>
+    /// <param name="resourceKey">Key to identify the ResourceManager</param>
+    /// <param name="usingResourceSet">Optional, Type of the ResourceSet the ResourceManager uses to construct ResourceSets.</param>
+    /// <returns>Flag indication if ResourceManager was added successfully</returns>
+    /// <exception cref="ArgumentNullException">If baseName or resourceDir is null, empty or whitespace.</exception>
+    public bool AddFileResource(string baseName, string resourceDir, string resourceKey, Type? usingResourceSet = null)
     {
         try
         {
-            if (AddFileResource(baseName, resourceDir, usingResourceSet))
-            {
-                var resourceManager = new SpecificLocalizationResourceManager(resources.Last());
-                keyedResources.Add(resourceKey, resourceManager);
-                Services?.AddKeyedSingleton<ILocalizationResourceManager>(resourceKey, resourceManager);
-                HasKeyedResources = true;
-                return true;
-            }
+            if (TryAddFileResource(baseName, resourceDir, out var resource, usingResourceSet) && KeyedResources.TryAdd(resourceKey, new(resource!)))
+                return HasKeyedResources = true;
             else
                 return false;
         }
@@ -166,11 +193,11 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
     /// <summary>
     /// Set if latest set culture should be restored. Default: <see langword="false"/>
     /// </summary>
-    /// <param name="restore">Flag indicating if latest set culture should be restored</param>
+    /// <param name="restore">Flag indicating if latest set culture should be restored. (Optional, Default: <see langword="true"/>)</param>
     /// <remarks>
     /// If set to <see langword="true"/>, this will override <see cref="InitialCulture(CultureInfo)"/>!
     /// </remarks>
-    public void RestoreLatestCulture(bool restore)
+    public void RestoreLatestCulture(bool restore = true)
     {
         //Set state and Update Current Culture
         restoreLatestCulture = restore;
@@ -209,10 +236,71 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         this.placeholderText = placeholderText;
     }
 
+    /// <summary>
+    /// Monitor the platform culture and update the ResourceManager current culture.
+    /// Includes live update of the culture, if the platform culture changes.
+    /// </summary>
+    /// <param name="activate">Flag indicating if the platform culture should be monitored. (Optional, Default: <see langword="true"/>)</param>
+    /// <remarks>With <see cref="RestoreLatestCulture(bool)"/> activated, Latest Culture will be restored on startup, regardless of current platform culture.</remarks>
+    public void MonitorPlatformCulture(bool activate = true)
+    {
+        //Get Platform Culture Monitoring Service
+        var platformCulture = container.Get<IPlatformCulture>();
+        if (platformCulture is not null)
+        {
+            //Unsubscribe from Platform Culture Changed Event
+            platformCulture.PlatformCultureChanged -= OnPlatformCultureChanged;
+
+            //Activate / Deactivate Platform Culture Monitoring
+            if (activate)
+            {
+                //Subscribe to Platform Culture Changed Event
+                platformCulture.PlatformCultureChanged += OnPlatformCultureChanged;
+            }
+        }
+        else
+        {
+            //Platform Culture Monitoring Service not available!
+            throw new InvalidOperationException("Platform Culture Monitoring Service not available!");
+        }
+    }
+
+    /// <summary>
+    /// Change Current Culture to Platform Culture.
+    /// </summary>
+    /// <param name="sender">PlatformCultureChanged event sender.</param>
+    /// <param name="e">PlatformCultureChanged event arguments.</param>
+    private void OnPlatformCultureChanged(object? sender, PlatformCultureChangedEventArgs e) => CurrentCulture = e.Culture;
+
+    /// <summary>
+    /// Register a service to the LocalizationResourceManager.
+    /// </summary>
+    /// <typeparam name="TService">The service type.</typeparam>
+    /// <param name="service">Instance of the <typeparamref name="TService"/> type.</param>
+    /// <remarks>Only for internal use!</remarks>
+    /// <returns>Flag indication if service was added successfully.</returns>
+    internal bool RegisterService<TService>(TService service) => container.Add(service);
+
+    /// <summary>
+    /// Register a service factory to the LocalizationResourceManager.
+    /// </summary>
+    /// <typeparam name="TService">The service type.</typeparam>
+    /// <param name="factory">Factory of the <typeparamref name="TService"/> type.</param>
+    /// <remarks>Only for internal use!</remarks>
+    /// <returns>Flag indication if service was added successfully.</returns>
+    internal bool RegisterService<TService>(Func<TService> factory) => container.Add(factory);
+
     #endregion ILocalizationSettings
 
     #region Internal Value Handling
 
+    /// <summary>
+    /// Get resource text value for <see cref="CurrentCulture"/> from specific resource manager.
+    /// </summary>
+    /// <param name="text">Resource name.</param>
+    /// <param name="resource">The ResourceManager to use.</param>
+    /// <returns>Found resource text value.</returns>
+    /// <exception cref="NullReferenceException">Will be thrown if no resource was found.</exception>
     internal string GetValue(string text, ResourceManager? resource)
     {
         //If supported, handle names with dots!
@@ -225,13 +313,66 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         return value ?? (suppressTextNotFoundException ? (usePlaceholder ? string.Format(placeholderText, text) : string.Empty) : throw new NullReferenceException($"{nameof(text)}: '{$"{resource?.BaseName}/{text}"}' not found!"));
     }
 
-    internal string GetValue(string text, ResourceManager resource, params object[] arguments) => string.Format(GetValue(text, resource), arguments);
+    /// <summary>
+    /// Get formatted resource text value for <see cref="CurrentCulture"/> from specific resource manager and with specified parameters.
+    /// </summary>
+    /// <param name="text">Resource name.</param>
+    /// <param name="resource">The ResourceManager to use.</param>
+    /// <param name="arguments">Parameters used when formatting resource text value.</param>
+    /// <remarks>
+    /// Uses <see cref="string.Format(string, object?[])"/> syntax.
+    /// </remarks>
+    /// <returns>Formatted resource text value.</returns>
+    internal string GetValue(string text, ResourceManager? resource, params object[] arguments) => string.Format(GetValue(text, resource), arguments);
 
-    internal ILocalizationResourceManager? GetResourceManager(string resourceManager) => keyedResources.GetValueOrDefault(resourceManager);
+    /// <summary>
+    /// Get specific resource manager by key.
+    /// </summary>
+    /// <param name="resourceManager">Key to identify the ResourceManager.</param>
+    /// <returns>Specific <see cref="ILocalizationResourceManager"/> resource manager identified.</returns>
+    internal ILocalizationResourceManager? GetResourceManager(string resourceManager) => KeyedResources.GetValueOrDefault(resourceManager);
 
     #endregion Internal Value Handling
 
     #region ILocalizationResourceManager
+
+    /// <summary>
+    /// Get Default / System culture.
+    /// </summary>
+    public CultureInfo DefaultCulture { get; }
+
+    private CultureInfo currentCulture = CultureInfo.CurrentCulture;
+
+    /// <summary>
+    /// Get/Set Current culture for resource manager.
+    /// </summary>
+    public CultureInfo CurrentCulture
+    {
+        get => currentCulture;
+        set
+        {
+            CultureInfo.CurrentCulture = value;
+            CultureInfo.CurrentUICulture = value;
+            CultureInfo.DefaultThreadCurrentCulture = value;
+            CultureInfo.DefaultThreadCurrentUICulture = value;
+            if (SetProperty(ref currentCulture, value, null))
+                LatestCulture = value;
+        }
+    }
+
+    private string LatestCultureName => Preferences?.Get(nameof(LatestCulture), DefaultCulture.Name) ?? DefaultCulture.Name;
+
+    /// <summary>
+    /// Get/Set Current / Latest culture.
+    /// </summary>
+    /// <remarks>
+    /// Latest CultureInfo is stored in Preferrences and updated everytime CurrentCulture is updated.
+    /// </remarks>
+    private CultureInfo LatestCulture
+    {
+        get => CultureInfo.GetCultureInfo(LatestCultureName);
+        set => Preferences?.Set(nameof(LatestCulture), value.Name);
+    }
 
     /// <summary>
     /// Get resource text value for <see cref="CurrentCulture"/>.
@@ -257,10 +398,17 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
         return value ?? (suppressTextNotFoundException ? (usePlaceholder ? string.Format(placeholderText, text) : string.Empty) : throw new NullReferenceException($"{nameof(text)}: '{text}' not found!"));
     }
 
+    /// <summary>
+    /// Get resource text value for <see cref="CurrentCulture"/> from specific resource manager.
+    /// </summary>
+    /// <param name="text">Resource name.</param>
+    /// <param name="resourceManager">Name of registered Resource manager.</param>
+    /// <returns>Found resource text value.</returns>
+    /// <exception cref="NullReferenceException">Will be thrown if no resource was found.</exception>
     public string GetValue(string text, string resourceManager)
     {
         //Init
-        var keyedResource = keyedResources.GetValueOrDefault(resourceManager);
+        var keyedResource = KeyedResources.GetValueOrDefault(resourceManager);
 
         //Return Result
         return GetValue(text, keyedResource?.Resource);
@@ -278,6 +426,16 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
     /// <returns>Formatted resource text value.</returns>
     public string GetValue(string text, params object[] arguments) => string.Format(GetValue(text), arguments);
 
+    /// <summary>
+    /// Get formatted resource text value for <see cref="CurrentCulture"/> from specific resource manager with specified parameters.
+    /// </summary>
+    /// <param name="text">Resource name.</param>
+    /// <param name="resourceManager">Name of registered Resource manager.</param>
+    /// <param name="arguments">Parameters used when formatting resource text value.</param>
+    /// <remarks>
+    /// Uses <see cref="string.Format(string, object?[])"/> syntax.
+    /// </remarks>
+    /// <returns>Formatted resource text value.</returns>
     public string GetValue(string text, string resourceManager, params object[] arguments) => string.Format(GetValue(text, resourceManager), arguments);
 
     /// <summary>
@@ -288,6 +446,12 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
     /// <returns>Found resource text value.</returns>
     public string this[string text] => GetValue(text);
 
+    /// <summary>
+    /// Indexer property to Get resource text value for <see cref="CurrentCulture"/> from specific resource manager.
+    /// </summary>
+    /// <param name="text">Resource name.</param>
+    /// <param name="resourceManager">Name of registered Resource manager.</param>
+    /// <returns>Found resource text value.</returns>
     public string this[string text, string resourceManager] => GetValue(text, resourceManager);
 
     /// <summary>
@@ -302,37 +466,17 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
     /// <returns>Formatted resource text value.</returns>
     public string this[string text, params object[] arguments] => GetValue(text, arguments);
 
+    /// <summary>
+    /// Indexer property to Get formatted resource text value for <see cref="CurrentCulture"/> from specific resource manager with specified parameters.
+    /// </summary>
+    /// <param name="text">Resource name.</param>
+    /// <param name="resourceManager">Name of registered Resource manager.</param>
+    /// <param name="arguments">Parameters used when formatting resource text value.</param>
+    /// <remarks>
+    /// Uses <see cref="string.Format(string, object?[])"/> syntax.
+    /// </remarks>
+    /// <returns>Formatted resource text value.</returns>
     public string this[string text, string resourceManager, params object[] arguments] => GetValue(text, resourceManager, arguments);
-
-    private CultureInfo currentCulture = CultureInfo.CurrentCulture;
-
-    /// <summary>
-    /// Get/Set Current culture for resource manager.
-    /// </summary>
-    public CultureInfo CurrentCulture
-    {
-        get => currentCulture;
-        set
-        {
-            CultureInfo.CurrentCulture = value;
-            CultureInfo.CurrentUICulture = value;
-            CultureInfo.DefaultThreadCurrentCulture = value;
-            CultureInfo.DefaultThreadCurrentUICulture = value;
-            if (SetProperty(ref currentCulture, value, null))
-                LatestCulture = value;
-        }
-    }
-
-    private string DefaultCultureName => Preferences.Get(nameof(DefaultCulture), CultureInfo.CurrentCulture.Name);
-
-    /// <summary>
-    /// Get/Set Default / System culture.
-    /// </summary>
-    public CultureInfo DefaultCulture
-    {
-        get => CultureInfo.GetCultureInfo(DefaultCultureName);
-        private set => Preferences.Set(nameof(DefaultCulture), value.Name);
-    }
 
     /// <summary>
     /// Release All Resources for All registered resources.
@@ -343,18 +487,4 @@ public class LocalizationResourceManager : ObservableObject, ILocalizationResour
     }
 
     #endregion ILocalizationResourceManager
-
-    private string LatestCultureName => Preferences.Get(nameof(LatestCulture), DefaultCulture.Name);
-
-    /// <summary>
-    /// Get/Set Current / Latest culture.
-    /// </summary>
-    /// <remarks>
-    /// Latest CultureInfo is stored in Preferrences and updated everytime CurrentCulture is updated.
-    /// </remarks>
-    private CultureInfo LatestCulture
-    {
-        get => CultureInfo.GetCultureInfo(LatestCultureName);
-        set => Preferences.Set(nameof(LatestCulture), value.Name);
-    }
 }

@@ -1,15 +1,17 @@
-﻿using System.Reflection;
-
-namespace LocalizationResourceManager.Maui;
+﻿namespace LocalizationResourceManager.Maui;
 
 /// <summary>
 /// Markup extension (XAML) for handling and updating localized string by tracking current culture from current localization resource manager.
 /// </summary>
+/// <remarks>Supports page specific resource manager.</remarks>
 [ContentProperty(nameof(Text))]
 public class TranslateExtension : IMarkupExtension<BindingBase>
 {
     private string text = string.Empty;
 
+    /// <summary>
+    /// Gets or sets the resource key for the translated text.
+    /// </summary>
     public string Text
     {
         get => text;
@@ -18,16 +20,36 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
             : value;
     }
 
+    /// <summary>
+    /// Gets or sets the string format for the translated text.
+    /// </summary>
     public string? StringFormat { get; set; }
 
+    /// <summary>
+    /// Gets or sets the value converter used for the translated text.
+    /// </summary>
     public IValueConverter? Converter { get; set; }
 
+    /// <summary>
+    /// Gets or sets the value converter parameter used for the translated text.
+    /// </summary>
     public object? ConverterParameter { get; set; }
 
+    /// <summary>
+    /// Gets or sets the name of a specific resource manager used for the translated text.
+    /// </summary>
+    /// <remarks>If nout found, the default resource manager will be used!</remarks>
     public string? ResourceManager { get; set; }
 
+    /// <inheritdoc/>
     object IMarkupExtension.ProvideValue(IServiceProvider serviceProvider) => ProvideValue(serviceProvider);
 
+    /// <summary>
+    /// Provides the value for the translation binding.
+    /// </summary>
+    /// <param name="serviceProvider">Basic service provider.</param>
+    /// <remarks>Preserve attribute added to ensure implementation is preserved by linker.</remarks>
+    /// <returns>Resource manager binding.</returns>
     [Microsoft.Maui.Controls.Internals.Preserve(Conditional = true)]
     public BindingBase ProvideValue(IServiceProvider serviceProvider)
     {

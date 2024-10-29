@@ -35,13 +35,24 @@
 - Add converter support to TranslateExtension.
 - Fix FileNotFoundException issue.
 - Extract core functionality into LocalizationResourceManager.Maui.Core library.
-- Upgrade to .NET 8.</PackageReleaseNotes>
+- Upgrade to .NET 8.
+- Add PlatformCulture to support Monitoring platform culture changes.
+- Add MicroContainer for internal type registration.
+</PackageReleaseNotes>
 		<Version>1.3.0-alpha.4</Version>
 	</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
-    <PackageReference Include="LocalizationResourceManager.Maui.Core" Version="1.0.0-alpha.1" />
+    <PackageReference Include="LocalizationResourceManager.Maui.Core" Version="1.0.0-alpha.2" />
+    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="8.0.0" />
+  </ItemGroup>
+
+  <!-- .NET (generic) -->
+  <ItemGroup Condition="!($(TargetFramework.StartsWith('net')) == true AND $(TargetFramework.EndsWith('.0')) == true AND $(TargetFramework.Contains('-')) != true)">
+    <!-- e.g net6.0 or net7.0 (and higher) -->
+    <Compile Remove="**\Generic\*.cs" />
+    <None Include="**\Generic\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,4 +70,5 @@
     <ProjectReference Include="..\LocalizationResourceManager.Maui.SourceGenerators\LocalizationResourceManager.Maui.SourceGenerators.csproj" ReferenceOutputAssembly="false" />
     <None Include="..\LocalizationResourceManager.Maui.SourceGenerators\bin\$(Configuration)\netstandard2.0\LocalizationResourceManager.Maui.SourceGenerators.dll" PackagePath="analyzers\dotnet\cs" Pack="true" Visible="false" />
   </ItemGroup>
-</Project>
+  
+  </Project>

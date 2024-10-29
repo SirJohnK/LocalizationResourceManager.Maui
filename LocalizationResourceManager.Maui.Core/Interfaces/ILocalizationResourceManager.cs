@@ -26,6 +26,12 @@ namespace LocalizationResourceManager.Maui
         /// <returns>Found resource text value.</returns>
         string GetValue(string text);
 
+        /// <summary>
+        /// Get resource text value for <see cref="CurrentCulture"/> from specific resource manager.
+        /// </summary>
+        /// <param name="text">Resource name.</param>
+        /// <param name="resourceManager">Name of registered Resource manager.</param>
+        /// <returns>Found resource text value.</returns>
         string GetValue(string text, string resourceManager);
 
         /// <summary>
@@ -40,6 +46,16 @@ namespace LocalizationResourceManager.Maui
         /// <returns>Formatted resource text value.</returns>
         string GetValue(string text, params object[] arguments);
 
+        /// <summary>
+        /// Get formatted resource text value for <see cref="CurrentCulture"/> from specific resource manager with specified parameters.
+        /// </summary>
+        /// <param name="text">Resource name.</param>
+        /// <param name="resourceManager">Name of registered Resource manager.</param>
+        /// <param name="arguments">Parameters used when formatting resource text value.</param>
+        /// <remarks>
+        /// Uses <see cref="string.Format(string, object?[])"/> syntax.
+        /// </remarks>
+        /// <returns>Formatted resource text value.</returns>
         string GetValue(string text, string resourceManager, params object[] arguments);
 
         /// <summary>
@@ -50,6 +66,12 @@ namespace LocalizationResourceManager.Maui
         /// <returns>Found resource text value.</returns>
         string this[string text] { get; }
 
+        /// <summary>
+        /// Indexer property to Get resource text value for <see cref="CurrentCulture"/> from specific resource manager.
+        /// </summary>
+        /// <param name="text">Resource name.</param>
+        /// <param name="resourceManager">Name of registered Resource manager.</param>
+        /// <returns>Found resource text value.</returns>
         string this[string text, string resourceManager] { get; }
 
         /// <summary>
@@ -64,6 +86,16 @@ namespace LocalizationResourceManager.Maui
         /// <returns>Formatted resource text value.</returns>
         string this[string text, params object[] arguments] { get; }
 
+        /// <summary>
+        /// Indexer property to Get formatted resource text value for <see cref="CurrentCulture"/> from specific resource manager with specified parameters.
+        /// </summary>
+        /// <param name="text">Resource name.</param>
+        /// <param name="resourceManager">Name of registered Resource manager.</param>
+        /// <param name="arguments">Parameters used when formatting resource text value.</param>
+        /// <remarks>
+        /// Uses <see cref="string.Format(string, object?[])"/> syntax.
+        /// </remarks>
+        /// <returns>Formatted resource text value.</returns>
         string this[string text, string resourceManager, params object[] arguments] { get; }
 
         /// <summary>

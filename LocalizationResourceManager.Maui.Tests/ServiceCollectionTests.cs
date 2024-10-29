@@ -1,38 +1,26 @@
 using FluentAssertions;
-using LocalizationResourceManager.Maui.Tests.Resources;
 using FluentAssertions.Microsoft.Extensions.DependencyInjection;
 
-namespace LocalizationResourceManager.Maui.Tests
+namespace LocalizationResourceManager.Maui.Tests;
+
+[TestClass]
+public class T01_ServiceCollectionTests
 {
-    [TestClass]
-    public class ServiceCollectionTests
+    [TestMethod]
+    public void T01_ServiceCollection_Should_Contain_LocalizationResourceManager()
     {
-        private readonly ILocalizationSettings settings;
-        private readonly IServiceCollection services = new ServiceCollection();
-        private readonly IServiceProvider serviceProvider;
+        AssembyContext.ServiceProvider!.GetService<ILocalizationResourceManager>().Should().NotBeNull();
+    }
 
-        public ServiceCollectionTests()
-        {
-            //Init
-            LocalizationResourceManager.Current.Services = services;
+    [TestMethod]
+    public void T02_ServiceCollection_Should_Contain_Keyed_SpecificResourceManager()
+    {
+        AssembyContext.ServiceProvider!.GetKeyedService<ILocalizationResourceManager>("SpecificPage").Should().NotBeNull();
+    }
 
-            //Configure Settings
-            settings = LocalizationResourceManager.Current;
-            settings.AddResource(AppResources.ResourceManager);
-            settings.AddResource(SpecificResources.ResourceManager, "SpecificPage");
-
-            //Register Service
-            services.AddSingleton(Preferences.Default);
-            services.AddSingleton<ILocalizationResourceManager>(LocalizationResourceManager.Current);
-
-            //Build Service Provider
-            serviceProvider = services.BuildServiceProvider();
-        }
-
-        [TestMethod]
-        public void ServiceCollection_Should_Contain_Three()
-        {
-            services.Should().HaveCount(3);
-        }
+    [TestMethod]
+    public void T03_ServiceCollection_Should_Contain_PlatformCulture()
+    {
+        AssembyContext.ServiceProvider!.GetService<IPlatformCulture>().Should().NotBeNull();
     }
 }

@@ -1,10 +1,10 @@
 ﻿using System.Linq;
+using System.Text;
 using System.Threading;
+using System.Diagnostics;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Diagnostics;
-using System.Text;
 
 namespace LocalizationResourceManager.Maui.SourceGenerators;
 
@@ -14,6 +14,10 @@ namespace LocalizationResourceManager.Maui.SourceGenerators;
 [Generator(LanguageNames.CSharp)]
 public class SpecificResourceManagerGenerator : IIncrementalGenerator
 {
+    /// <summary>
+    /// Initialize the Source Generator.
+    /// </summary>
+    /// <param name="context">Source generator context.</param>
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
 #if DEBUG
@@ -30,9 +34,14 @@ public class SpecificResourceManagerGenerator : IIncrementalGenerator
         context.RegisterSourceOutput(classes, AddSpecificResourceManager);
     }
 
+    /// <summary>
+    /// Add the SpecificResourceManager implementation to the source.
+    /// </summary>
+    /// <param name="context">Source Production Context.</param>
+    /// <param name="array">Array of type information.</param>
     private void AddSpecificResourceManager(SourceProductionContext context, ImmutableArray<ITypeSymbol?> array)
     {
-        //Found any SPecific Resource Manager Attributes?
+        //Found any Specific Resource Manager Attributes?
         if (!array.IsDefaultOrEmpty)
         {
             foreach (var typeInfo in array)
@@ -72,6 +81,12 @@ public class SpecificResourceManagerGenerator : IIncrementalGenerator
         }
     }
 
+    /// <summary>
+    /// Predicate Stage to determine if the class has the SpecificResourceManagerAttribute and should be transformed.
+    /// </summary>
+    /// <param name="node">Syntax Node to evaluate.</param>
+    /// <param name="token">Cancellation Token.</param>
+    /// <returns></returns>
     private bool PredicateStage(SyntaxNode node, CancellationToken token)
     {
         //Should node be transformed result
@@ -88,6 +103,12 @@ public class SpecificResourceManagerGenerator : IIncrementalGenerator
         return result;
     }
 
+    /// <summary>
+    /// Transform Stage to get the class type information.
+    /// </summary>
+    /// <param name="context">Node context to analyze.</param>
+    /// <param name="token">Cancellation Token.</param>
+    /// <returns></returns>
     private ITypeSymbol? TransformStage(GeneratorSyntaxContext context, CancellationToken token)
     {
         //Get the class type information

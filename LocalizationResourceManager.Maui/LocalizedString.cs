@@ -3,7 +3,7 @@
 namespace LocalizationResourceManager.Maui;
 
 /// <summary>
-/// Localized string, updated by tracking current culture from current localizarion resource manager.
+/// Localized string, updated by tracking current culture from current localization resource manager.
 /// </summary>
 public class LocalizedString : CoreLocalizedString
 {

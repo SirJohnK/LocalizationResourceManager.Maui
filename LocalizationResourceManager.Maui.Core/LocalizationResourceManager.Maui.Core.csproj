@@ -16,8 +16,10 @@
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <PackageReleaseNotes>- Extract core functionality from the LocalizationResourceManager.Maui library.</PackageReleaseNotes>
-    <Version>1.0.0-alpha.1</Version>
+    <PackageReleaseNotes>- Extract core functionality from the LocalizationResourceManager.Maui library.
+- Add ILocalizationSettings and IPlatformCulture interfaces.
+- Update interface comments.</PackageReleaseNotes>
+    <Version>1.0.0-alpha.2</Version>
   </PropertyGroup>
 
   <ItemGroup>

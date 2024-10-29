@@ -1,8 +1,12 @@
-﻿using System.Collections.ObjectModel;
-using System.Globalization;
+﻿using System.Globalization;
+using System.Collections.ObjectModel;
 
 namespace LocalizationResourceManager.Maui;
 
+/// <summary>
+/// Markup extension (XAML) for handling and updating localized string with custom binding by tracking current culture from current localization resource manager.
+/// </summary>
+/// <remarks>Supports page specific resource manager.</remarks>
 [ContentProperty(nameof(Path))]
 public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiValueConverter
 {
@@ -27,22 +31,34 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
     /// <inheritdoc/>
     public object? Source { get; set; } = null;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Flag indicating if binded value should be translated.
+    /// </summary>
     public bool TranslateValue { get; set; } = false;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Resource key for the translated text used with the binded value.
+    /// </summary>
     public string? TranslateFormat { get; set; }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Resource key for the translated text used if the binded value is equal to numeric value 1.
+    /// </summary>
     public string? TranslateOne { get; set; }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Resource key for the translated text used if the binded value is equal to numeric value 0.
+    /// </summary>
     public string? TranslateZero { get; set; }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Resource key for the translated text used if the binded value is equal to boolean value true.
+    /// </summary>
     public string? TranslateTrue { get; set; }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Resource key for the translated text used if the binded value is equal to boolean value false.
+    /// </summary>
     public string? TranslateFalse { get; set; }
 
     public string? ResourceManager { get; set; }
@@ -53,6 +69,11 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
         return (this as IMarkupExtension<BindingBase>).ProvideValue(serviceProvider);
     }
 
+    /// <summary>
+    /// Provides the value for the translation binding.
+    /// </summary>
+    /// <param name="serviceProvider">Basic service provider.</param>
+    /// <returns>Resource manager and translate converter multi binding.</returns>
     BindingBase IMarkupExtension<BindingBase>.ProvideValue(IServiceProvider serviceProvider)
     {
         // Handle specific resource manager
@@ -82,6 +103,10 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
         };
     }
 
+    /// <summary>
+    /// Convert the binded value to translated text.
+    /// </summary>
+    /// <returns>Translated text with the binded value.</returns>
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
         //Get and Verify Current Value
@@ -106,14 +131,27 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
         return value;
     }
 
+    /// <summary>
+    /// Evaluate if a value is equal to numeric value 0.
+    /// </summary>
     private static bool IsZero(object value) => (value is int number && number == 0);
 
+    /// <summary>
+    /// Evaluate if a value is equal to numeric value 1.
+    /// </summary>
     private static bool IsOne(object value) => (value is int number && number == 1);
 
+    /// <summary>
+    /// Evaluate if a value is equal to boolean value true.
+    /// </summary>
     private static bool IsTrue(object value) => (value is bool flag && flag);
 
+    /// <summary>
+    /// Evaluate if a value is equal to boolean value false.
+    /// </summary>
     private static bool IsFalse(object value) => (value is bool flag && !flag);
 
+    /// <inheritdoc/>
     public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
     {
         throw new NotImplementedException();

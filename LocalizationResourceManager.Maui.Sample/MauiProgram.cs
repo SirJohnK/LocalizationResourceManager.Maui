@@ -21,7 +21,8 @@ namespace LocalizationResourceManager.Maui.Sample
                     settings.AddResource(AppResources.ResourceManager);
                     settings.AddResource(SpecificResources.ResourceManager, nameof(SpecificPage));
                     settings.SuppressTextNotFoundException(true, "'{0}' not found!");
-                    settings.RestoreLatestCulture(true);
+                    settings.RestoreLatestCulture();
+                    settings.MonitorPlatformCulture();
                 });
 
             //Add Views

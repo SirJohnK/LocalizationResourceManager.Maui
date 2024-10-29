@@ -16,12 +16,28 @@ public static class AppHostBuilderExtensions
     /// </remarks>
     public static MauiAppBuilder UseLocalizationResourceManager(this MauiAppBuilder builder, Action<ILocalizationSettings> settings)
     {
-        //Setup Settings
-        LocalizationResourceManager.Current.Services = builder.Services;
-        settings.Invoke(LocalizationResourceManager.Current);
+        //Init
+        var currentResourceManager = LocalizationResourceManager.Current;
 
-        //Add Service
-        builder.Services.AddSingleton<ILocalizationResourceManager>(LocalizationResourceManager.Current);
+        //Setup Internal Settings
+        currentResourceManager.RegisterService(Preferences.Default);
+        currentResourceManager.RegisterService(() => PlatformCulture.Current);
+
+        //Setup Settings
+        settings.Invoke(currentResourceManager);
+
+        //Add Services
+        builder.Services.AddSingleton<ILocalizationSettings>(currentResourceManager);
+        builder.Services.AddSingleton<ILocalizationResourceManager>(currentResourceManager);
+        builder.Services.AddSingleton((serviceProvider) => PlatformCulture.Current);
+        builder.Services.AddKeyedSingleton<ILocalizationResourceManager>(KeyedService.AnyKey, (serviceProvider, key) =>
+        {
+            // Attempt to resolve the keyed service
+            if (key is string keyString && currentResourceManager.KeyedResources.TryGetValue(keyString, out var keyedResource))
+                return keyedResource;
+            else
+                return default!;
+        });
 
         //Return Builder
         return builder;
