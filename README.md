@@ -131,6 +131,7 @@ public partial class SpecificPage : ContentPage, ISpecificResourceManager
 
 ## Custom binding in XAML
 Use the `TranslateBindingExtension` for custom binding with format and plural support.
+- Specific Resource Manager handling described for `TranslateExtension`, also applies for `TranslateBindingExtension`!
 
 *Plural support in XAML*
 
