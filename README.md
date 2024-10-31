@@ -122,6 +122,11 @@ public partial class SpecificPage : ContentPage, ISpecificResourceManager
     FontSize="18"
     HorizontalOptions="Center"
     Text="{localization:Translate Title}" />
+
+<Label
+    FontSize="18"
+    HorizontalOptions="Center"
+    Text="{localization:Translate SubTitle}" />
 ```
 
 ## Custom binding in XAML
