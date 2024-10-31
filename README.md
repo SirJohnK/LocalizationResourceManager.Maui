@@ -4,7 +4,7 @@ Enhanced .NET MAUI version of the Xamarin Community Toolkit LocalizationResource
 
 ## NuGet
 
-|Name|Description|Info|
+|Name|Description|Package|
 | ------------------- | :------------------: | :------------------: |
 |LocalizationResourceManager.Maui|Main .NET Maui library.|[![NuGet](https://img.shields.io/nuget/vpre/LocalizationResourceManager.Maui)](https://www.nuget.org/packages/LocalizationResourceManager.Maui/#versions-body-tab)|
 |LocalizationResourceManager.Maui.Core|Core .NET Standard library.|[![NuGet](https://img.shields.io/nuget/vpre/LocalizationResourceManager.Maui.Core)](https://www.nuget.org/packages/LocalizationResourceManager.Maui.Core/#versions-body-tab)|
@@ -54,7 +54,7 @@ builder
     .UseLocalizationResourceManager(settings =>
     {
         settings.AddResource(AppResources.ResourceManager);
-        settings.RestoreLatestCulture(true);
+        settings.RestoreLatestCulture();
     });
 ```
 Settings contains 7 methods for configuration:
@@ -67,9 +67,8 @@ Settings contains 7 methods for configuration:
 - **MonitorPlatformCulture** (Monitor the platform culture and update the ResourceManager current culture, if changed, at runtime. Optional parameter, Default: true)
 
 ## Use in XAML
-When used for localized texts in XAML pages, use the `TranslateExtension`:
-- Add namespace reference to library.
-- Use Translate extension with name of resource. (All resource libraries will be searched until name is found!)
+### When used for localized texts in XAML pages, use the `TranslateExtension`:
+1. Add namespace reference to library.
 ```csharp
 <ContentPage
     x:Class="LocalizationResourceManager.Maui.Sample.MainPage"
@@ -77,6 +76,7 @@ When used for localized texts in XAML pages, use the `TranslateExtension`:
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui">
 ```
+2. Use Translate extension with name of resource. (All resource libraries will be searched until name is found!)
 ```csharp
 <Label
     FontSize="18"
@@ -85,6 +85,45 @@ When used for localized texts in XAML pages, use the `TranslateExtension`:
     SemanticProperties.HeadingLevel="Level2"
     Text="{localization:Translate WelcomeToMAUI}" />
 ```
+### To get a localized text from a specific Resource manager:
+1. Register the Resource manager with a resource key.
+```csharp
+.UseLocalizationResourceManager(settings =>
+{
+    settings.AddResource(AppResources.ResourceManager);
+    settings.AddResource(SpecificResources.ResourceManager, nameof(SpecificPage));
+    settings.RestoreLatestCulture();
+})
+```
+2. Add namespace reference to library. (See above)
+3. Set the `TranslateExtension` property `ResourceManager` to the resource key for the specific Resource Manager.
+```csharp
+<Label
+    FontSize="18"
+    HorizontalOptions="Center"
+    Text="{localization:Translate Title, ResourceManager=SpecificPage}" />
+```
+### To set a page specific Resource manager for all localized texts on page:
+1. Register the Resource manager with a resource key. (See above)
+2. Add the `SpecificResourceManagerAttribute` to the page code behind class for source generated implementation of the `ISpecificResourceManager` interface.
+```csharp
+[SpecificResourceManager(nameof(SpecificPage))]
+public partial class SpecificPage : ContentPage
+```
+... or implement the `ISpecificResourceManager` interface directly.
+```csharp
+public partial class SpecificPage : ContentPage, ISpecificResourceManager
+{
+    public string ResourceManager => nameof(SpecificPage);
+```
+3. Use Translate extension with name of resource. (Only the page specific library will be searched!)
+```csharp
+<Label
+    FontSize="18"
+    HorizontalOptions="Center"
+    Text="{localization:Translate Title}" />
+```
+
 ## Custom binding in XAML
 Use the `TranslateBindingExtension` for custom binding with format and plural support.
 
