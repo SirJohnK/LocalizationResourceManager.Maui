@@ -4,10 +4,10 @@ Enhanced .NET MAUI version of the Xamarin Community Toolkit LocalizationResource
 
 ## NuGet
 
-|Name|Info|
-| ------------------- | :------------------: |
-|LocalizationResourceManager.Maui|[![NuGet](https://img.shields.io/nuget/vpre/LocalizationResourceManager.Maui)](https://www.nuget.org/packages/LocalizationResourceManager.Maui/#versions-body-tab)|
-|LocalizationResourceManager.Maui.Core|[![NuGet](https://img.shields.io/nuget/vpre/LocalizationResourceManager.Maui.Core)](https://www.nuget.org/packages/LocalizationResourceManager.Maui.Core/#versions-body-tab)|
+|Name|Description|Info|
+| ------------------- | :------------------: | :------------------: |
+|LocalizationResourceManager.Maui|Main .NET Maui library.|[![NuGet](https://img.shields.io/nuget/vpre/LocalizationResourceManager.Maui)](https://www.nuget.org/packages/LocalizationResourceManager.Maui/#versions-body-tab)|
+|LocalizationResourceManager.Maui.Core|Core .NET Standard library.|[![NuGet](https://img.shields.io/nuget/vpre/LocalizationResourceManager.Maui.Core)](https://www.nuget.org/packages/LocalizationResourceManager.Maui.Core/#versions-body-tab)|
 
 ## Background
 
@@ -20,12 +20,20 @@ Compared to the original solution we have some enhanced and added features:
 - Easy setup with builder pattern extension
 - Supports multiple Resource managers
 - Supports file based Resource managers
+- Supports key identification of specific Resource managers
+- Supports page specific Resource managers
+- Supports adding Resource managers at runtime
 - Supports storing and restoring of the latest set culture
-- New `ILocalizationResourceManager` interface registered for constructor injection with DI
+- Supports View Models without .NET Maui dependency
+- Support monitoring of platform culture changes
+- Supports Resource names with dots
+- Supports updating Settings at runtime
+- New `ILocalizationResourceManager` interface registered, with or without a key for identification, for constructor injection with DI
+- New `ILocalizationSettings` interface registered for constructor injection with DI
+- New `IPlatformCulture` interface registered for constructor injection with DI
 - Stores current Default / System culture
-- Supports Resource names with dots.
-- Option to set a placeholder text to be displayed if text is not found.
-- `TranslateBindingExtension` for custom binding with format and plural support in XAML by [Stephen Quan](https://github.com/stephenquan).
+- Option to set a placeholder text to be displayed if text is not found
+- `TranslateBindingExtension` for custom binding with format and plural support in XAML by [Stephen Quan](https://github.com/stephenquan)
 - Uses the [WeakEventManager](https://learn.microsoft.com/en-us/dotnet/api/microsoft.maui.weakeventmanager) (.NET MAUI)
 
 For localized texts used in XAML and/or code behind, we still have:
@@ -49,13 +57,14 @@ builder
         settings.RestoreLatestCulture(true);
     });
 ```
-Settings contains 6 methods for configuration:
-- **AddResource** (Add one or more Resource Managers)
-- **AddFileResource** (Add file based Resource Managers. Create/Read/Write at runtime with [ResourceWriter](https://learn.microsoft.com/en-us/dotnet/api/system.resources.resourcewriter) and [ResourceReader](https://learn.microsoft.com/en-us/dotnet/api/system.resources.resourcereader).)
+Settings contains 7 methods for configuration:
+- **AddResource** (Add one or more Resource Managers with or without a key to identify the specific Resource Manager)
+- **AddFileResource** (Add file based Resource Managers with or without a key to identify the specific Resource Manager. Create/Read/Write at runtime with [ResourceWriter](https://learn.microsoft.com/en-us/dotnet/api/system.resources.resourcewriter) and [ResourceReader](https://learn.microsoft.com/en-us/dotnet/api/system.resources.resourcereader).)
 - **InitialCulture** (Set initial/startup culture, Default: Current System Culture)
-- **RestoreLatestCulture** (Restore latest set culture flag, Default: false, Note: Will override InitalCulture!)
+- **RestoreLatestCulture** (Restore latest set culture flag. Optional parameter, Default: true, Note: Will override InitalCulture!)
 - **SupportNameWithDots** (Activate support for Resource Names with Dots when used with TranslateExtension. Option to set custom dot substitution. Default: "_")
 - **SuppressTextNotFoundException** (Suppress/Deactivate throwing the text not found exception. Option to set a placeholder text to be displayed if text is not found.)
+- **MonitorPlatformCulture** (Monitor the platform culture and update the ResourceManager current culture, if changed, at runtime. Optional parameter, Default: true)
 
 ## Use in XAML
 When used for localized texts in XAML pages, use the `TranslateExtension`:
