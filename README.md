@@ -64,7 +64,7 @@ Settings contains 7 methods for configuration:
 - **RestoreLatestCulture** (Restore latest set culture flag. Optional parameter, Default: true, Note: Will override InitalCulture!)
 - **SupportNameWithDots** (Activate support for Resource Names with Dots when used with TranslateExtension. Option to set custom dot substitution. Default: "_")
 - **SuppressTextNotFoundException** (Suppress/Deactivate throwing the text not found exception. Option to set a placeholder text to be displayed if text is not found.)
-- **MonitorPlatformCulture** (Monitor the platform culture and update the ResourceManager current culture, if changed, at runtime. Optional parameter, Default: true)
+- **MonitorPlatformCulture** (Monitor the platform culture and update the Resource manager current culture, if changed, at runtime. Optional parameter, Default: true)
 
 ## Use in XAML
 ### When used for localized texts in XAML pages, use the `TranslateExtension`:
@@ -208,13 +208,17 @@ public bool OrderSent { get; set; } = false;
 ```
 
 ## Use in Code
-When used to handle localized texts in code behind or ViewModel, use the `LocalizedString` class:
-- Add LocalizedString to code behind or ViewModel to track culture changes
-- If needed, make binding to LocalizedString in XAML
+### When used to handle localized texts in code behind or ViewModel, use the `LocalizedString` class:
+1. Inject or Resolve the current Resource manager with `ILocalizationResourceManager` from DI.
 ```csharp
-public LocalizedString HelloWorld { get; } = new(() => $"{AppResources.Hello}, {AppResources.World}!");
+private readonly ILocalizationResourceManager resourceManager;
+
+public MainViewModel(ILocalizationResourceManager resourceManager)
+{
+    //Init
+    this.resourceManager = resourceManager;
 ```
-...or to support multiple Resource managers...
+2. Add LocalizedString to code behind or ViewModel and use the Resource manager to build the localized string.
 ```csharp
 public LocalizedString HelloWorld { get; }
 
@@ -222,6 +226,16 @@ public MainPage(ILocalizationResourceManager resourceManager)
 {
     HelloWorld = new(() => $"{resourceManager["Hello"]}, {resourceManager["World"]}!");
 ```
+...or use the Resource manager `CreateLocalizedString` extension method.
+```csharp
+    HelloWorld = resourceManager.CreateLocalizedString(() => $"{resourceManager["Hello"]}, {resourceManager["World"]}!");
+```
+3. Both the Resource manager Indexer property and the GetValue method can be used and both support parameter arguments.
+4. If needed, the `LocalizedString` support binding from XAML page.
+```csharp
+public LocalizedString HelloWorld { get; } = new(() => $"{AppResources.Hello}, {AppResources.World}!");
+```
+...or to support multiple Resource managers...
 ```csharp
 <Label
     FontSize="32"
