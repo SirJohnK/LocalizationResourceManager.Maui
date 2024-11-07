@@ -85,6 +85,6 @@ namespace LocalizationResourceManager.Maui
         /// </summary>
         /// <param name="activate">Flag indicating if the platform culture should be monitored. (Optional, Default: <see langword="true"/>)</param>
         /// <remarks>With <see cref="RestoreLatestCulture(bool)"/> activated, Latest Culture will be restored on startup, regardless of current platform culture.</remarks>
-        void MonitorPlatformCulture(bool activate = true);
+        void MonitorPlatformCulture(DevicePlatform platform = DevicePlatform.All);
     }
 }
