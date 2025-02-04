@@ -10,7 +10,10 @@ public class PlatformCulture : IPlatformCulture
     private PlatformCulture()
     {
         //Start listening for the UserPreferenceChanged event
-        SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
+        SystemEvents.InvokeOnEventsThread(() =>
+        {
+            SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
+        });
     }
 
     private readonly WeakEventManager eventManager = new();
