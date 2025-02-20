@@ -4,6 +4,7 @@ using System.Globalization;
 namespace LocalizationResourceManager.Maui;
 
 [ContentProperty(nameof(Path))]
+[AcceptEmptyServiceProvider]
 public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiValueConverter
 {
     /// <inheritdoc/>

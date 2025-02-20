@@ -4,6 +4,7 @@
 /// Markup extension (XAML) for handling and updating localized string by tracking current culture from current localization resource manager.
 /// </summary>
 [ContentProperty(nameof(Text))]
+[AcceptEmptyServiceProvider]
 public class TranslateExtension : IMarkupExtension<BindingBase>
 {
     private string text = string.Empty;
