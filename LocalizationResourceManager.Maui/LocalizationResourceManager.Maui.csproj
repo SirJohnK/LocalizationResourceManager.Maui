@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0;net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+		<TargetFrameworks>net9.0;net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
 		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
+		<!-- <TargetFrameworks>$(TargetFrameworks);net9.0-tizen</TargetFrameworks> -->
 		<UseMaui>true</UseMaui>
-    <MauiVersion>8.0.3</MauiVersion>
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
+    <MauiVersion>9.0.0</MauiVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
@@ -22,7 +22,7 @@
 		<Title>LocalizationResourceManager.Maui</Title>
 		<Authors>Johan Svensson, Charlin Agramonte, Brandon Minnick, Maksym Koshovyi</Authors>
 		<Description>Enhanced .NET MAUI version of the Xamarin Community Toolkit LocalizationResourceManager.</Description>
-		<Copyright>© 2024 Johan Svensson All Rights Reserved</Copyright>
+		<Copyright>© 2025 Johan Svensson All Rights Reserved</Copyright>
 		<PackageProjectUrl>https://github.com/SirJohnK/LocalizationResourceManager.Maui</PackageProjectUrl>
 		<PackageIcon>sirjohnk.png</PackageIcon>
 		<RepositoryUrl>https://github.com/SirJohnK/LocalizationResourceManager.Maui</RepositoryUrl>
@@ -33,9 +33,7 @@
 		<PackageReleaseNotes>- Add option to add and select a specific ResourceManager.
 - Add source generator for the ISpecificResourceManager implementation.
 - Add converter support to TranslateExtension.
-- Fix FileNotFoundException issue.
 - Extract core functionality into LocalizationResourceManager.Maui.Core library.
-- Upgrade to .NET 8.
 - Add PlatformCulture to support Monitoring platform culture changes.
 - Add MicroContainer for internal type registration.
 </PackageReleaseNotes>
