@@ -5,6 +5,7 @@
 /// </summary>
 /// <remarks>Supports page specific resource manager.</remarks>
 [ContentProperty(nameof(Text))]
+[RequireService([typeof(IReferenceProvider), typeof(IProvideValueTarget)])]
 public class TranslateExtension : IMarkupExtension<BindingBase>
 {
     private string text = string.Empty;

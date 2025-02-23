@@ -8,6 +8,7 @@ namespace LocalizationResourceManager.Maui;
 /// </summary>
 /// <remarks>Supports page specific resource manager.</remarks>
 [ContentProperty(nameof(Path))]
+[RequireService([typeof(IReferenceProvider), typeof(IProvideValueTarget)])]
 public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiValueConverter
 {
     // Internal Properties
