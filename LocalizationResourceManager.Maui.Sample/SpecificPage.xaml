@@ -3,15 +3,16 @@
     x:Class="LocalizationResourceManager.Maui.Sample.SpecificPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:LocalizationResourceManager.Maui.Sample"
     xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
-    Title="{localization:Translate Title}">
+    Title="{local:TranslateSpecificResources Title}">
 
     <VerticalStackLayout>
         <Label FontSize="Medium">
             <Label.FormattedText>
                 <FormattedString>
                     <Span Text="Title: " />
-                    <Span Text="{localization:Translate Title}" />
+                    <Span Text="{local:TranslateSpecificResources Title}" />
                 </FormattedString>
             </Label.FormattedText>
         </Label>

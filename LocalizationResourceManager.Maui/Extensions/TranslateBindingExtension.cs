@@ -40,26 +40,31 @@ public class TranslateBindingExtension : IMarkupExtension<BindingBase>, IMultiVa
     /// <summary>
     /// Resource key for the translated text used with the binded value.
     /// </summary>
+    [System.ComponentModel.TypeConverter(typeof(ResourceKeyTypeConverter))]
     public string? TranslateFormat { get; set; }
 
     /// <summary>
     /// Resource key for the translated text used if the binded value is equal to numeric value 1.
     /// </summary>
+    [System.ComponentModel.TypeConverter(typeof(ResourceKeyTypeConverter))]
     public string? TranslateOne { get; set; }
 
     /// <summary>
     /// Resource key for the translated text used if the binded value is equal to numeric value 0.
     /// </summary>
+    [System.ComponentModel.TypeConverter(typeof(ResourceKeyTypeConverter))]
     public string? TranslateZero { get; set; }
 
     /// <summary>
     /// Resource key for the translated text used if the binded value is equal to boolean value true.
     /// </summary>
+    [System.ComponentModel.TypeConverter(typeof(ResourceKeyTypeConverter))]
     public string? TranslateTrue { get; set; }
 
     /// <summary>
     /// Resource key for the translated text used if the binded value is equal to boolean value false.
     /// </summary>
+    [System.ComponentModel.TypeConverter(typeof(ResourceKeyTypeConverter))]
     public string? TranslateFalse { get; set; }
 
     public string? ResourceManager { get; set; }

@@ -3,6 +3,7 @@
     x:Class="LocalizationResourceManager.Maui.Sample.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:LocalizationResourceManager.Maui.Sample"
     xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui">
 
     <ScrollView>
@@ -14,7 +15,7 @@
             <Image
                 HeightRequest="200"
                 HorizontalOptions="Center"
-                SemanticProperties.Description="{localization:Translate BotDescription}"
+                SemanticProperties.Description="{local:TranslateAppResources BotDescription}"
                 Source="dotnet_bot.png" />
 
             <Label
@@ -26,9 +27,9 @@
             <Label
                 FontSize="18"
                 HorizontalOptions="Center"
-                SemanticProperties.Description="{localization:Translate WelcomeToMAUI}"
+                SemanticProperties.Description="{local:TranslateAppResources WelcomeToMAUI}"
                 SemanticProperties.HeadingLevel="Level2"
-                Text="{localization:Translate WelcomeToMAUI}" />
+                Text="{local:TranslateAppResources WelcomeToMAUI}" />
 
             <Button
                 x:Name="CounterBtn"

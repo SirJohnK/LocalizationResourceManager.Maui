@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__vs-mcp__ExecuteCommand",
+      "mcp__vs-mcp__GetSolutionTree",
+      "Bash(dotnet build:*)"
+    ]
+  }
+}

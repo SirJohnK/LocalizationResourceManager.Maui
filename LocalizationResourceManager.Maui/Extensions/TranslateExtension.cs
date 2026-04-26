@@ -13,6 +13,7 @@ public class TranslateExtension : IMarkupExtension<BindingBase>
     /// <summary>
     /// Gets or sets the resource key for the translated text.
     /// </summary>
+    [System.ComponentModel.TypeConverter(typeof(ResourceKeyTypeConverter))]
     public string Text
     {
         get => text;
