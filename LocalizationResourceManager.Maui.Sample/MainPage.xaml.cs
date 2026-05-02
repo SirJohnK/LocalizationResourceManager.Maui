@@ -8,16 +8,6 @@ namespace LocalizationResourceManager.Maui.Sample
         private int count = 0;
         private readonly ILocalizationResourceManager resourceManager;
 
-        public int Count
-        {
-            get => count;
-            set
-            {
-                count = value;
-                OnPropertyChanged(nameof(Count));
-            }
-        }
-
         public LocalizedString HelloWorld { get; }
         public LocalizedString CurrentCulture { get; }
 
@@ -32,7 +22,17 @@ namespace LocalizationResourceManager.Maui.Sample
             BindingContext = this;
         }
 
-        private void OnCounterClicked(object sender, EventArgs e) => Count++;
+        private void OnCounterClicked(object sender, EventArgs e)
+        {
+            count++;
+
+            if (count == 1)
+                CounterBtn.SetTranslate(Button.TextProperty, "ClickedOneTime", count);
+            else
+                CounterBtn.SetTranslate(Button.TextProperty, "ClickedManyTimes", count);
+
+            SemanticScreenReader.Announce(CounterBtn.Text);
+        }
 
         private void OnToggleLanguage(object sender, EventArgs e)
         {
